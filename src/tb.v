@@ -48,19 +48,19 @@ module tb (
 `ifdef IMPL_MULS_X3XY
     // instantiate the DUT
     muls_x3y3 multipler_signed_x3y3(
-        `ifdef GL_TEST
-            .vccd1( 1'b1),
-            .vssd1( 1'b0),
-        `endif
+`ifdef GL_TEST
+        .vccd1( 1'b1),
+        .vssd1( 1'b0),
+`endif
         .io_in  (inputs),
         .io_out (outputs)
     );
 `endif
     top_mulu_x2y2 top_mulu_x2y2 (
-        `ifdef GL_TEST
-            .vccd1( 1'b1),
-            .vssd1( 1'b0),
-        `endif
+`ifdef GL_TEST
+        .vccd1( 1'b1),
+        .vssd1( 1'b0),
+`endif
         .io_in  (inputs),
         .io_out (outputs)
     );

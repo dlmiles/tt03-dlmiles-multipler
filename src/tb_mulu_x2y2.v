@@ -25,17 +25,17 @@ module tb_mulu_x2y2 (
 
     // this part dumps the trace to a vcd file that can be viewed with GTKWave
     initial begin
-        $dumpfile ("tb.vcd");
+        $dumpfile ("tb_mulu_x2y2.vcd");
         $dumpvars (0, tb);
         #1;
     end
 
     // instantiate the DUT
     mulu_x2y2 multipler_unsigned_x2y2 (
-        `ifdef GL_TEST
-            .vccd1( 1'b1),
-            .vssd1( 1'b0),
-        `endif
+`ifdef GL_TEST
+        .vccd1( 1'b1),
+        .vssd1( 1'b0),
+`endif
         .x   (x),
         .y   (y),
         .p   (p)
