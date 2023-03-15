@@ -11,6 +11,9 @@ set script_dir [file dirname [file normalize [info script]]]
 # - the list of source files
 source $::env(DESIGN_DIR)/user_config.tcl
 
+# This is part of this project and the only edit to this file
+source $::env(DESIGN_DIR)/config_extra.tcl
+
 # save some time
 set ::env(RUN_KLAYOUT_XOR) 0
 set ::env(RUN_KLAYOUT_DRC) 0
