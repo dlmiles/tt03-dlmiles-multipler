@@ -27,7 +27,8 @@ jobs:
       uses: actions/checkout@v3
       with:
         #repository: tinytapeout/tt-support-tools
-        repository: 'dlmiles/tt-support-tools@verilog_include_dirs+logging'
+        repository: dlmiles/tt-support-tools
+        branch: 'verilog_include_dirs+logging'
         path: tt
 
     # need python
