@@ -1,24 +1,7 @@
 `default_nettype none
 
-`define X_WIDTH 2
-`define Y_WIDTH 2
-
-`define P_WIDTH 4
-`define HAS_SIGN	0
-`define	S_WIDTH		0
-
-`define HAS_READY	0
-
-`define I_CLK_BITID	0
-`define I_RST_BITID	1
-`define I_X_BITID	2
-`define I_Y_BITID	4
-
-`define O_SIGN_BITID	6
-`define O_READY_BITID	7
-
-`define READY_FALSE	1'b0
-`define READY_TRUE	1'b1
+`include "global.vh"
+`include "mulu_x2y2.vh"
 
 // Unsigned Multipler, X width 2, Y width 2, making P result width 4
 module mulu_x2y2 (
@@ -98,20 +81,20 @@ module mulu_x2y2 (
 
     // The generate : genad, above unrolls to look like this:
 
-//    halfadder #(.WIDTH(1)) ha_iy1_ix1_ip1
-//    (
-//                    .a  (acc[0]),   //(acc[adix-1]),
-//                    .b  (pp[1][0]), //(pp[adiy][adix-1]),
-//                    .s  (ads[1]),   //(ads[adix]),
-//                    .c  (acc[1])    //(acc[adix])
-//    );
-//    halfadder #(.WIDTH(1)) ha_iy1_ix2_ip2
-//    (
-//                    .a  (acc[1]),   //(acc[adix-1]),
-//                    .b  (pp[1][1]), //(pp[adiy][adix-1]),
-//                    .s  (ads[2]),   //(acc[adix])
-//                    .c  (acc[2])    //(acc[adix])
-//    );
+    // halfadder #(.WIDTH(1)) ha_iy1_ix1_ip1
+    // (
+    //                 .a  (acc[0]),   //(acc[adix-1]),
+    //                 .b  (pp[1][0]), //(pp[adiy][adix-1]),
+    //                 .s  (ads[1]),   //(ads[adix]),
+    //                 .c  (acc[1])    //(acc[adix])
+    // );
+    // halfadder #(.WIDTH(1)) ha_iy1_ix2_ip2
+    // (
+    //                 .a  (acc[1]),   //(acc[adix-1]),
+    //                 .b  (pp[1][1]), //(pp[adiy][adix-1]),
+    //                 .s  (ads[2]),   //(acc[adix])
+    //                 .c  (acc[2])    //(acc[adix])
+    // );
 
     assign ads[`P_WIDTH-1] = acc[`X_WIDTH];	// MSB output
 
