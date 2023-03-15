@@ -1,10 +1,8 @@
 `default_nettype none
 `timescale 1ns/1ps
 
-`define	IMPL_MULU_X2Y2		1
-
 `include "global.vh"
-`include "mulu_x2y2.vh"
+`include "config.vh"
 
 /*
 this testbench just instantiates the module and makes some convenient wires
@@ -49,7 +47,7 @@ module tb (
 
     // instantiate the DUT
 
-`ifdef IMPL_HALFADDER
+`ifdef IMPL_HALFADDER_NO
     top_halfadder halfadder(
 `ifdef GL_TEST
         .vccd1( 1'b1),
@@ -62,7 +60,7 @@ module tb (
     );
 `endif
 
-`ifdef IMPL_FULLADDER
+`ifdef IMPL_FULLADDER_NO
     top_fulladder fulladder(
 `ifdef GL_TEST
         .vccd1( 1'b1),
@@ -88,7 +86,7 @@ module tb (
 `endif
 
 `ifdef IMPL_MULU_X2Y2
-    top_mulu_x2y2 top_mulu_x2y2 (
+    top_mulu_x2y2 multiplier_unsigned_x2y2 (
 `ifdef GL_TEST
         .vccd1( 1'b1),
         .vssd1( 1'b0),

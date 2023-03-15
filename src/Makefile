@@ -5,10 +5,10 @@
 SIM ?= icarus
 TOPLEVEL_LANG ?= verilog
 
+TB_VERILOG_SOURCES += $(PWD)/tb.v
+
 # normal simulation
 ifneq ($(GATES),yes)
-
-VERILOG_SOURCES += $(PWD)/tb.v
 
 else
 
@@ -22,14 +22,16 @@ VERILOG_SOURCES += $(PDK_ROOT)/sky130B/libs.ref/sky130_fd_sc_hd/verilog/primitiv
 VERILOG_SOURCES += $(PDK_ROOT)/sky130B/libs.ref/sky130_fd_sc_hd/verilog/sky130_fd_sc_hd.v
 
 # this gets copied in by the GDS action workflow
-VERILOG_SOURCES += $(PWD)/tb.v
 VERILOG_SOURCES += $(PWD)/gate_level_netlist.v
 endif
 
-include $(PWD)/mulu_x2y2/Makefile
+include $(PWD)/halfadder/Makefile
+#include $(PWD)/mulu_x2y2/Makefile
+
+VERILOG_SOURCES += $(TB_VERILOG_SOURCES)
 
 # TOPLEVEL is the name of the toplevel module in your Verilog or VHDL file
-TOPLEVEL = tb
+TOPLEVEL ?= tb
 
 # MODULE is the basename of the Python test file
 MODULE = test

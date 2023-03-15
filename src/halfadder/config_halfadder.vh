@@ -1,0 +1,2 @@
+
+`define	IMPL_HALFADDER		1

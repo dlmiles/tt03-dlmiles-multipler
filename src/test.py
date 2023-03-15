@@ -69,7 +69,7 @@ def design_element_exists(dut, name):
 def try_clk(dut):
     if design_element_exists(dut, 'clk'):
         clock = Clock(dut.clk, 10, units="us")		# 100 KHz
-        dut._log.info("DUT.clk exists, setting up clock: ".format(clock))
+        dut._log.info("DUT.clk exists, setting up clock: {}".format(clock))
         cocotb.start_soon(clock.start())
         return clock
     return None
@@ -124,11 +124,14 @@ async def test_muls_x3y3(dut):
             assert dut.rdy.value.is_resolvable
 
 
+
+
+
 #
 #
 # FIXME read data from mulu_x2y2.txt
 #
-@cocotb.test()
+#@cocotb.test()
 async def test_mulu_x2y2(dut):
     report_resolvable(dut, 'initial ')
     clock = try_clk(dut)
@@ -146,6 +149,33 @@ async def test_mulu_x2y2(dut):
             await ClockCycles(dut.clk, 2)
             dut._log.info("x={0} y={1} => p={2} {3}".format(x, y, dut.p.value, try_integer(dut.p.value)))
             assert dut.p.value.is_resolvable
+
+
+@cocotb.test()
+async def test_halfadder(dut):
+    report_resolvable(dut, 'initial ')
+    clock = try_clk(dut)
+    await try_rst(dut)
+
+    width = dut.WIDTH.value
+    ab_max = pow(2, width) - 1
+    a_range = range(0, ab_max+1)
+    b_range = range(0, ab_max+1)
+    
+    dut.a.value = 0
+    dut.b.value = 0
+    await ClockCycles(dut.clk, 1)
+
+    report_resolvable(dut)
+
+    for a in a_range:
+        dut.a.value = a
+        for b in b_range:
+            dut.b.value = b
+            await ClockCycles(dut.clk, 2)
+            dut._log.info("x={0} y={1} => s={2} {3} c={4} {5}".format(a, b, dut.s.value, try_integer(dut.s.value,), dut.c.value, try_integer(dut.c.value)))
+            assert dut.s.value.is_resolvable
+            assert dut.c.value.is_resolvable
 
 
 #
