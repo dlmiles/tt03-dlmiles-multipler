@@ -21,7 +21,7 @@ module tb_mulu_x3y3 (
 `ifdef HAS_READY
     , output rdy
 `endif
-   );
+);
 
     // this part dumps the trace to a vcd file that can be viewed with GTKWave
     initial begin
