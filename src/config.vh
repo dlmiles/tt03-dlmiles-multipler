@@ -1,7 +1,8 @@
 
+// @also Makefile: pick correct include
 //`define	IMPL_HALFADDER		1
-`define	IMPL_FULLADDER		1
-//`define	IMPL_MULU_X2Y2		1
+//`define	IMPL_FULLADDER		1
+`define	IMPL_MULU_X2Y2		1
 
 `ifdef IMPL_HALFADDER
 `include "halfadder/halfadder.vh"

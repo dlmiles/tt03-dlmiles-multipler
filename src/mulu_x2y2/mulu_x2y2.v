@@ -1,7 +1,7 @@
 `default_nettype none
 
 `include "global.vh"
-`include "mulu_x2y2.vh"
+`include "config.vh"    // mulu_x2y2.vh
 
 // Unsigned Multipler, X width 2, Y width 2, making P result width 4
 module mulu_x2y2 (

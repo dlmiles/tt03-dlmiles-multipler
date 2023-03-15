@@ -131,7 +131,7 @@ async def test_muls_x3y3(dut):
 #
 # FIXME read data from mulu_x2y2.txt
 #
-#@cocotb.test()
+@cocotb.test()
 async def test_mulu_x2y2(dut):
     report_resolvable(dut, 'initial ')
     clock = try_clk(dut)
@@ -139,7 +139,8 @@ async def test_mulu_x2y2(dut):
 
     dut.x.value = 0
     dut.y.value = 0
-    await ClockCycles(dut.clk, 2)
+    await ClockCycles(dut.clk, 1)
+
     report_resolvable(dut)
 
     for x in x_range:
@@ -147,7 +148,8 @@ async def test_mulu_x2y2(dut):
         for y in y_range:
             dut.y.value = y
             await ClockCycles(dut.clk, 2)
-            dut._log.info("x={0} y={1} => p={2} {3}".format(x, y, dut.p.value, try_integer(dut.p.value)))
+            dut._log.info("x={0} y={1} => p={2} {3}".format(x, y,
+                dut.p.value, try_integer(dut.p.value)))
             assert dut.p.value.is_resolvable
 
 
@@ -184,7 +186,7 @@ async def test_halfadder(dut):
 #
 # FIXME read data from fulladder.txt
 #
-@cocotb.test()
+#@cocotb.test()
 async def test_fulladder(dut):
     report_resolvable(dut, 'initial ')
     clock = try_clk(dut)

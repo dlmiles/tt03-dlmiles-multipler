@@ -2,7 +2,7 @@
 `timescale 1ns/1ps
 
 `include "global.vh"
-`include "mulu_x2y2.vh"
+`include "config.vh"    // mulu_x2y2.vh
 
 /*
 this testbench just instantiates the module and makes some convenient wires

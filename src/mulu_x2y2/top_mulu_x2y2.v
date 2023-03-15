@@ -1,14 +1,14 @@
 `default_nettype none
 
 `include "global.vh"
-`include "mulu_x2y2.vh"
+`include "config.vh"	// mulu_x2y2.vh
 
 // This exists a a top level module for production wiring the ports up
 module top_mulu_x2y2 #(
     parameter NOOP = 0
 ) (
-    input	[7:0]		io_in,
-    output	[7:0]		io_out
+    input	[`INPUT_WIDTH-1:0]		io_in,
+    output	[`OUTPUT_WIDTH-1:0]		io_out
 );
 
     wire clk = io_in[`I_CLK_BITID];		// 0
