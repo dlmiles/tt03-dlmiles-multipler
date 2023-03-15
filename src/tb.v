@@ -98,10 +98,10 @@ module tb (
 
 `ifdef IMPL_MULU_X3Y3
     top_mulu_x3y3 multiplier_unsigned_x3y3 (
-`ifdef GL_TEST
-        .vccd1( 1'b1),
-        .vssd1( 1'b0),
-`endif
+//`ifdef GL_TEST
+//        .vccd1( 1'b1),
+//        .vssd1( 1'b0),
+//`endif
         .io_in  (inputs),
         .io_out (outputs)
     );
