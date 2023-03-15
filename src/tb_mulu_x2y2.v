@@ -6,21 +6,19 @@ this testbench just instantiates the module and makes some convenient wires
 that can be driven / tested by the cocotb test.py
 */
 
-module tb (
+module tb_mulu_x2y2 (
     // testbench is controlled by test.py
     input clk,
-    input rst,
     input [1:0] x,
     input [1:0] y,
-
     output [3:0] p
 `ifdef HAS_SIGN
-    , output s
+    , output s,
 `endif
 `ifdef HAS_READY
     , output rdy
 `endif
-);
+   );
 
     // this part dumps the trace to a vcd file that can be viewed with GTKWave
     initial begin
@@ -29,35 +27,21 @@ module tb (
         #1;
     end
 
-    // wire up the inputs and outputs
-    wire [7:0] inputs = {2'b0, {y}, {x}, rst, clk};
-    wire [7:0] outputs;
-    assign p = outputs[3:0];
+    // instantiate the DUT
+    mulu_x2y2 multipler_unsigned_x2y2(
+        `ifdef GL_TEST
+            .vccd1( 1'b1),
+            .vssd1( 1'b0),
+        `endif
+        .x   (x),
+        .y   (y),
+        .p   (p)
 `ifdef HAS_SIGN
-    assign s = outputs[6];
+        . .s   (s)
 `endif
 `ifdef HAS_READY
-    assign rdy = outputs[7];
+        , .rdy (rdy)
 `endif
-
-`ifdef IMPL_MULS_X3XY
-    // instantiate the DUT
-    muls_x3y3 multipler_signed_x3y3(
-        `ifdef GL_TEST
-            .vccd1( 1'b1),
-            .vssd1( 1'b0),
-        `endif
-        .io_in  (inputs),
-        .io_out (outputs)
-    );
-`endif
-    top_mulu_x2y2 top_mulu_x2y2 (
-        `ifdef GL_TEST
-            .vccd1( 1'b1),
-            .vssd1( 1'b0),
-        `endif
-        .io_in  (inputs),
-        .io_out (outputs)
-    );
+        );
 
 endmodule

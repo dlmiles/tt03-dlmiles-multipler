@@ -9,7 +9,13 @@ TOPLEVEL_LANG ?= verilog
 ifneq ($(GATES),yes)
 
 # this is the only part you should need to modify:
-VERILOG_SOURCES += $(PWD)/tb.v $(PWD)/counter.v $(PWD)/decoder.v
+#VERILOG_SOURCES += $(PWD)/tb_fulladder.v
+VERILOG_SOURCES += $(PWD)/halfadder.v
+VERILOG_SOURCES += $(PWD)/fulladder.v
+#VERILOG_SOURCES += $(PWD)/tb_muls_x3y3.v $(PWD)/muls_x3y3.v
+VERILOG_SOURCES += $(PWD)/tb_mulu_x2y2.v $(PWD)/mulu_x2y2.v
+VERILOG_SOURCES += $(PWD)/top_mulu_x2y2.v
+VERILOG_SOURCES += $(PWD)/tb.v
 
 else
 
@@ -34,3 +40,7 @@ MODULE = test
 
 # include cocotb's make rules to take care of the simulator setup
 include $(shell cocotb-config --makefiles)/Makefile.sim
+
+
+distclean: clean
+	$(RM) -r __pycache__
