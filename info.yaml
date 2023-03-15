@@ -6,9 +6,9 @@ project:
 # If using an HDL, set wokwi_id as 0 and uncomment and list your source files here. 
 # Source files must be in ./src and you must list each source file separately
   source_files:        
-    - counter.v
-    - decoder.v
-  top_module:  "seven_segment_seconds"      # put the name of your top module here, make it unique by prepending your github username
+    - top_mulu_x2y2.v
+    - mulu_x2y2.v
+  top_module:  "top_mulu_x2y2"      # put the name of your top module here, make it unique by prepending your github username
 
 # Keep a track of the submission yaml
 yaml_version: 3.0
@@ -18,47 +18,65 @@ yaml_version: 3.0
 #
 # Here is a great example: https://github.com/davidsiaw/tt02-davidsiaw-stackcalc/blob/38c5647f83aad2aec675d566aa3d67b98f0aac81/info.yaml
 documentation: 
-  author:       "Matt Venn"
-  title:        "7 segment seconds"
+  author:       "Darryl L. Miles"
+  title:        "TT03 Multiplier"
   language:     "Verilog"
-  description:  "Count up to 10, one second at a time."
+  description:  "Utilize the project mm^2 area as much as possible for the purpose of digital multiplication"
 
 # Longer description of how the project works. You can use standard markdown format.
   how_it_works: |
-      Uses a set of registers to divide the clock, and then some combinational logic
-      to convert from binary to decimal for the display.
+      Demostrate various multiply methods that exist to show what is possible on a small scale and experiment and observe characteristics.
 
-      Puts a slower square wave output on output 7.
+      The final selected design for TT03 will utilize the standard primitives to fill the area as much as possible to achieve the widest multiplier.
+      
+      The goal in the future, after TT03 would be to sequeeze more than that.
+
+      Asking the questions?
+        Can we paint our own primitives that optimize some dimenstion, for example PPA, for a given configuration: unsigned, signed,
+         X width == Y width, X width != Y width.
+        Then can we do this with some kind of automation?
+         i.e. have a toolkit to specify parameters and have it construct optimized GDS for this one purpose.
+         This would be gate shape, sub-block shape, to achieve layout density, tuned for the fab process.
+        Can we use AI to do any of this ?
+          Can we feed DRC (Design Rule Constraints) into an AI for this specific process and have it work
+           out a theoretical better than we have GDS layout ?
 
 # Instructions on how someone could test your project, include things like what buttons do what and how to set the clock if needed
   how_to_test:  |
-      After reset, the counter should increase by one every second.
+      Feed the input with X and Y multiplicand, observe the output product P on the output, almost immediately* (as the physics allows), or just wait for the next clock cycle :).
+      input[0] = CLK
+      input[1] = RST (reserved at this time, and not used as the project is 100&percent; combinational logic
+      input[?:2] = X
+      input[?:?] = Y
+      output[?:0] = P
+      
+      * - The speed of light may vary in your universe, please check the universe user manual.
 
 # A description of what the inputs do
   inputs:               
     - clock
     - reset
-    - none
-    - none
-    - none
-    - none
+    - x_0
+    - x_1
+    - y_0
+    - y_1
     - none
     - none
 # A description of what the outputs do
   outputs:
-    - segment a
-    - segment b
-    - segment c
-    - segment d
-    - segment e
-    - segment f
-    - segment g
-    - slow clock output
+    - p_0
+    - p_1
+    - p_2
+    - p_3
+    - none
+    - none
+    - none
+    - none
 
 # The following fields are optional
-  tag:          "timer, test"      # comma separated list of tags: test encryption, experiment, clock, animation, utility, industrial, pwm, fpga, alu, microprocessor, risc, riscv, sensor, signal generator, fft, filter, music, bcd, sound, serial, timer, random number generator, calculator, decoder, counter, puzzle, multiplier, game, oscillator,
+  tag:          "multiplier"      # comma separated list of tags: test encryption, experiment, clock, animation, utility, industrial, pwm, fpga, alu, microprocessor, risc, riscv, sensor, signal generator, fft, filter, music, bcd, sound, serial, timer, random number generator, calculator, decoder, counter, puzzle, multiplier, game, oscillator,
   external_hw:  ""      # Describe any external hardware needed
-  discord:      "mattvenn#1907"      # Your discord handle, used for communication and automatically assigning tapeout role after a submission
+  discord:      ""      # Your discord handle, used for communication and automatically assigning tapeout role after a submission
   doc_link:     ""      # URL to longer form documentation, eg the README.md in your repository
-  clock_hz:     1000       # Clock frequency in Hz (if required)
+  clock_hz:     0       # Clock frequency in Hz (if required)
   picture:      ""      # relative path to a picture in your repository
