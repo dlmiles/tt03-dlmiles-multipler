@@ -13,10 +13,10 @@ module top_mulu_x2y2 #(
 
     wire clk = io_in[`I_CLK_BITID];		// 0
     wire reset = io_in[`I_RST_BITID];		// 1
-    wire [1:0] x = io_in[`I_X_BITID+`X_WIDTH-1:`I_X_BITID];	// [3:2]
-    wire [1:0] y = io_in[`I_Y_BITID+`Y_WIDTH-1:`I_Y_BITID];	// [5:4]
+    wire [`X_WIDTH-1:0] x = io_in[`I_X_BITID+`X_WIDTH-1:`I_X_BITID];	// [3:2]
+    wire [`Y_WIDTH-1:0] y = io_in[`I_Y_BITID+`Y_WIDTH-1:`I_Y_BITID];	// [5:4]
 
-    wire [3:0] p;
+    wire [`P_WIDTH-1:0] p;
     assign io_out[`O_P_BITID+`P_WIDTH-1:`O_P_BITID] = p;	// [3:0]
 `ifdef HAS_SIGN
     wire s;
@@ -28,9 +28,9 @@ module top_mulu_x2y2 #(
 `endif
 
     mulu_x2y2 mulu_x2y2(
-      .x  (x),
-      .y  (y),
-      .p  (p)
+        .x   (x),
+        .y   (y),
+        .p   (p)
 `ifdef HAS_SIGN
       , .s   (s)
 `endif

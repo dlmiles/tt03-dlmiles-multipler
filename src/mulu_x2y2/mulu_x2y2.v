@@ -62,7 +62,7 @@ module mulu_x2y2 (
     generate //: genad
         for(genvar adiy = 1; adiy < `Y_WIDTH; adiy++) begin : iy			// loop 1 time, from 1
             for(genvar adix = 1; adix <= `X_WIDTH; adix++) begin : ix			// loop 2 times, from 1
-                for(genvar adip = adix + 1; adip == adix + 1; adip++) begin : ip	// vanity loop 1 time, from adix + 1
+//                for(genvar adip = adix + 1; adip < adix + 3; adip++) begin : ip	// vanity loop 1 time, from adix + 1
                     // The vanity for loop exists to demonstrate the arcane limitations of verilog :)
                     // In wanting to name my component for better schematic/netlist reading by humans
                     //  adip represents the P (product) output bit we are working on here
@@ -74,7 +74,7 @@ module mulu_x2y2 (
                         .s  (ads[adix]),
                         .c  (acc[adix])
                     );
-                end
+//                end
             end
         end
     endgenerate

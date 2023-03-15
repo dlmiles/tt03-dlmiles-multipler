@@ -1,6 +1,8 @@
 `default_nettype none
 `timescale 1ns/1ps
 
+`define	IMPL_MULU_X2Y2		1
+
 `include "global.vh"
 `include "mulu_x2y2.vh"
 
@@ -45,9 +47,37 @@ module tb (
     assign rdy = outputs[`O_READY_BITID];			// 7
 `endif
 
-`ifdef IMPL_MULS_X3XY
     // instantiate the DUT
-    muls_x3y3 multipler_signed_x3y3(
+
+`ifdef IMPL_HALFADDER
+    top_halfadder halfadder(
+`ifdef GL_TEST
+        .vccd1( 1'b1),
+        .vssd1( 1'b0),
+`endif
+        .a  (inputs[2]),
+        .b  (inputs[3]),
+        .s  (outputs[0]),
+        .c  (outputs[1])
+    );
+`endif
+
+`ifdef IMPL_FULLADDER
+    top_fulladder fulladder(
+`ifdef GL_TEST
+        .vccd1( 1'b1),
+        .vssd1( 1'b0),
+`endif
+        .a  (inputs[2]),
+        .b  (inputs[3]),
+        .ci (inputs[4]),
+        .s  (outputs[0]),
+        .co (outputs[1])
+    );
+`endif
+
+`ifdef IMPL_MULS_X3XY
+    top_muls_x3y3 multipler_signed_x3y3(
 `ifdef GL_TEST
         .vccd1( 1'b1),
         .vssd1( 1'b0),
@@ -56,6 +86,8 @@ module tb (
         .io_out (outputs)
     );
 `endif
+
+`ifdef IMPL_MULU_X2Y2
     top_mulu_x2y2 top_mulu_x2y2 (
 `ifdef GL_TEST
         .vccd1( 1'b1),
@@ -64,5 +96,17 @@ module tb (
         .io_in  (inputs),
         .io_out (outputs)
     );
+`endif
+
+`ifdef IMPL_MULU_X3Y3
+    top_mulu_x3y3 multiplier_unsigned_x3y3 (
+`ifdef GL_TEST
+        .vccd1( 1'b1),
+        .vssd1( 1'b0),
+`endif
+        .io_in  (inputs),
+        .io_out (outputs)
+    );
+`endif
 
 endmodule

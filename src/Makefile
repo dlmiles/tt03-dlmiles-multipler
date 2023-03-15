@@ -8,13 +8,6 @@ TOPLEVEL_LANG ?= verilog
 # normal simulation
 ifneq ($(GATES),yes)
 
-# this is the only part you should need to modify:
-#VERILOG_SOURCES += $(PWD)/tb_fulladder.v
-VERILOG_SOURCES += $(PWD)/halfadder.v
-VERILOG_SOURCES += $(PWD)/fulladder.v
-#VERILOG_SOURCES += $(PWD)/tb_muls_x3y3.v $(PWD)/muls_x3y3.v
-VERILOG_SOURCES += $(PWD)/tb_mulu_x2y2.v $(PWD)/mulu_x2y2.v
-VERILOG_SOURCES += $(PWD)/top_mulu_x2y2.v
 VERILOG_SOURCES += $(PWD)/tb.v
 
 else
@@ -30,13 +23,10 @@ VERILOG_SOURCES += $(PDK_ROOT)/sky130B/libs.ref/sky130_fd_sc_hd/verilog/sky130_f
 
 # this gets copied in by the GDS action workflow
 VERILOG_SOURCES += $(PWD)/tb.v
-VERILOG_SOURCES += $(PWD)/tb_mulu_x2y2.v
-#VERILOG_SOURCES += $(PWD)/top_mulu_x2y2.v
-#VERILOG_SOURCES += $(PWD)/mulu_x2y2.v
-#VERILOG_SOURCES += $(PWD)/halfadder.v
-#VERILOG_SOURCES += $(PWD)/fulladder.v
 VERILOG_SOURCES += $(PWD)/gate_level_netlist.v
 endif
+
+include $(PWD)/mulu_x2y2/Makefile
 
 # TOPLEVEL is the name of the toplevel module in your Verilog or VHDL file
 TOPLEVEL = tb
