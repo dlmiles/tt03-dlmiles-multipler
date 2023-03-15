@@ -8,6 +8,7 @@ project:
   source_files:
     - global.vh
     - config.vh
+    - include/mulu_x3y3/mulu_x3y3.vh
     - mulu_x3y3/config_mulu_x3y3.vh
     - mulu_x3y3/mulu_x3y3.vh
     - mulu_x3y3/top_mulu_x3y3.v
