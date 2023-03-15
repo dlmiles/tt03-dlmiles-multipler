@@ -29,7 +29,7 @@ module mulu_x2y2 (
     /////// PARTIAL PRODUCTS
 
     // This method is better for working when X_WIDTH != Y_WIDTH
-    wire [`Y_WIDTH-1:0][`X_WIDTH-1:0] pp;
+    wire [`Y_WIDTH-1:0] pp [`X_WIDTH-1:0];
 
     genvar ppiy;
     genvar ppix;
