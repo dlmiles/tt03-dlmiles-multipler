@@ -23,7 +23,7 @@
 // Unsigned Multipler, X width 2, Y width 2, making P result width 4
 module mulu_x2y2 (
     input	[`X_WIDTH-1:0]	x,
-    input	[`X_WIDTH-1:0]	y,
+    input	[`Y_WIDTH-1:0]	y,
 
     output	[`P_WIDTH-1:0]	p
 `ifdef HAS_SIGN
@@ -63,53 +63,55 @@ module mulu_x2y2 (
 
     //////// HALF ADDERS
 
-    // adder-sum (which aliases output product)
+    // adder-sum (alias for final output product)
     //    the LSB (PP0[0]) and MSB (last carry-out) have special treatment
     wire [`P_WIDTH-1:0] ads;
 
-    assign ads[0] = pp[0][0];			// LSB output (LSB of PP0)
+    assign ads[0] = pp[0][0];			// LSB output (LSB of PP0 as-is)
 
     // adder-carry chain
     wire [`X_WIDTH:0] acc;			// +1
 
-    // we set this up so the generate block can cascade
+    // we set this up in preparation for the generate block to cascade
     assign acc[0] = pp[0][1];	// adder-carry maybe this should be external for cascade when supported ?
 
-//    genvar adiy;
-//    genvar adix;
-//    genvar adip;	// the product bit id we're working on to name the adder
     // note we start at bit1 as LSB(bit0) has already had special treatment
-//    generate //: genad
-//        //adip = 1;
-//        for(adiy = 1; adiy < `Y_WIDTH - 1; adiy = adiy + 1) begin	// loop 1 time, from 1
-//            for(adix = 1; adix < `X_WIDTH; adix = adix + 1) begin	// loop 2 times, from 1
-//                halfadder #(
-//                    .WIDTH(1)
-//                ) halfadder_$adiy_$adix_$adip (
-//                    .a  (1'b0), //(acc[adix-1]),
-//                    .b  (1'b1), //(pp[adiy][adix-1]),
-//                    .s  (ads[adix]),
-//                    .c  (acc[adix])
-//                );
-//                //adip = adip + 1;
-//            end
-//        end
-//    endgenerate
+    generate //: genad
+        for(genvar adiy = 1; adiy < `Y_WIDTH; adiy++) begin : iy			// loop 1 time, from 1
+            for(genvar adix = 1; adix <= `X_WIDTH; adix++) begin : ix			// loop 2 times, from 1
+                for(genvar adip = adix + 1; adip == adix + 1; adip++) begin : ip	// vanity loop 1 time, from adix + 1
+                    // The vanity for loop exists to demonstrate the arcane limitations of verilog :)
+                    // In wanting to name my component for better schematic/netlist reading by humans
+                    //  adip represents the P (product) output bit we are working on here
+                    halfadder #(
+                        .WIDTH(1)
+                    ) ha (	// ha_$adiy_$adix_$adip => ha_iy1_ix1_ip1 ?
+                        .a  (acc[adix-1]),
+                        .b  (pp[adiy][adix-1]),
+                        .s  (ads[adix]),
+                        .c  (acc[adix])
+                    );
+                end
+            end
+        end
+    endgenerate
 
-    halfadder #(.WIDTH(1)) halfadder_$adiy1_$adix1_$adip1
-    (
-                    .a  (acc[0]), //(acc[adix-1]),
-                    .b  (pp[1][0]), //(pp[adiy][adix-1]),
-                    .s  (ads[1]),
-                    .c  (acc[1])
-    );
-    halfadder #(.WIDTH(1)) halfadder_$adiy1_$adix2_$adip2
-    (
-                    .a  (acc[1]), //(acc[adix-1]),
-                    .b  (pp[1][1]), //(pp[adiy][adix-1]),
-                    .s  (ads[2]),
-                    .c  (acc[2])
-    );
+    // The generate : genad, above unrolls to look like this:
+
+//    halfadder #(.WIDTH(1)) ha_iy1_ix1_ip1
+//    (
+//                    .a  (acc[0]),   //(acc[adix-1]),
+//                    .b  (pp[1][0]), //(pp[adiy][adix-1]),
+//                    .s  (ads[1]),   //(ads[adix]),
+//                    .c  (acc[1])    //(acc[adix])
+//    );
+//    halfadder #(.WIDTH(1)) ha_iy1_ix2_ip2
+//    (
+//                    .a  (acc[1]),   //(acc[adix-1]),
+//                    .b  (pp[1][1]), //(pp[adiy][adix-1]),
+//                    .s  (ads[2]),   //(acc[adix])
+//                    .c  (acc[2])    //(acc[adix])
+//    );
 
     assign ads[`P_WIDTH-1] = acc[`X_WIDTH];	// MSB output
 

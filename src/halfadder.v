@@ -2,13 +2,13 @@
 //
 //
 module halfadder #(
-    parameter WIDTH = 1
+    parameter	WIDTH = 1
 ) (
-    input	[WIDTH-1:0] a,
-    input	[WIDTH-1:0] b,
+    input	[WIDTH-1:0]	a,
+    input	[WIDTH-1:0]	b,
 
-    output	[WIDTH-1:0] s,
-    output	[WIDTH-1:0] c
+    output	[WIDTH-1:0]	s,
+    output	[WIDTH-1:0]	c
 );
 
     assign s = a ^ b;

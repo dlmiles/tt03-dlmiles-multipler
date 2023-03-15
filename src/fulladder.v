@@ -2,14 +2,14 @@
 //
 //
 module fulladder #(
-    parameter WIDTH = 2
+    parameter	WIDTH = 1
 ) (
-    input [WIDTH-1:0] a,
-    input [WIDTH-1:0] b,
-    input ci,
+    input	[WIDTH-1:0]	a,
+    input	[WIDTH-1:0]	b,
+    input			ci,
 
-    output [WIDTH-1:0] s,
-    output co
+    output	[WIDTH-1:0]	s,
+    output			co
 );
 
     assign {co, s} = a + b + ci;
