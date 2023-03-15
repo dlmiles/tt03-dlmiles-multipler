@@ -28,7 +28,7 @@ jobs:
       with:
         #repository: tinytapeout/tt-support-tools
         repository: dlmiles/tt-support-tools
-        branch: 'verilog_include_dirs+logging'
+        ref: 'verilog_include_dirs+logging'
         path: tt
 
     # need python
