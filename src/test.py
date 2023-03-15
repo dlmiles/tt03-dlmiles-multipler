@@ -1,39 +1,90 @@
 #!/usr/bin/python3
+import os
+import sys
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge, FallingEdge, Timer, ClockCycles
+from cocotb.wavedrom import trace
 
-# TODO make a config_build(x_width=2, y_width=2, has_sign=False)
-# TODO make config_dump()
-config_has_sign = False
-x_width = 2
-y_width = 2
-s_width = 1 if config_has_sign else 0
-p_width = x_width + y_width + s_width
+waves = None
 
-if config_has_sign:
-    x_min = -pow(2, x_width-1)
-    x_max = pow(2, x_width-1) - 1
-    y_min = -pow(2, y_width-1)
-    y_max = pow(2, y_width-1) - 1
-else:
-    x_min = 0
-    x_max = pow(2, x_width) - 1
-    y_min = 0
-    y_max = pow(2, y_width) - 1
+# Move to utils.wavedrom ?
+#@cocotb.before()
+def wavedrom_init(dut):
+    global waves
+    # clk, fakeclk (for comb/async)
+    # rst, reset, rstn, resetn, reset_n
+    # input, io_in, io_input, in, inputs
+    # output, io_out, io_output, out, outputs
+    #a = [dut.clk, dut.rst, dut.x, dut.y, dut.p, input, output]
+    # dut.io_in, dut.io_out
+    waves = trace(dut.clk, dut.rst, dut.x, dut.y, dut.p, dut.inputs, dut.outputs, clk=dut.clk)
+    return waves
 
-print("config_has_sign={0}".format(config_has_sign))
-print("x_width={0}".format(x_width))
-print("y_width={0}".format(y_width))
-print("s_width={0}".format(s_width))
-print("p_width={0}".format(p_width))
-print("x_min={0}".format(x_min))
-print("x_max={0}".format(x_max))
-print("y_min={0}".format(y_min))
-print("y_max={0}".format(y_max))
+def wavedrom_setup(dut):
+    global waves
+    waves = wavedrom_init(dut)
+    waves.__enter__()
+    return waves
 
-x_range = range(x_min, x_max+1)
-y_range = range(y_min, y_max+1)
+def wavedrom_dumpj():
+    global waves
+    if waves is not None:
+        #waves.__exit__(0, 0, 0)
+        waves.write('test_wavedrom.json')
+        waves = None
+
+async def wavedrom_sample():
+    global waves
+    if waves is not None:
+        #waves.sample()
+        await waves._monitor()
+        pass
+
+
+# Move to utils.multiply ?
+def mul_config_build(x_width=None, y_width=None, has_sign=False):
+    if x_width is None or y_width is None:
+        error("mul_config_build(x_width,y_width) not set")
+
+    cfg = {}
+    cfg['has_sign'] = has_sign
+    cfg['x_width'] = x_width
+    cfg['y_width'] = y_width
+    cfg['s_width'] = 1 if has_sign else 0
+    cfg['p_width'] = x_width + y_width + cfg['s_width']
+
+    if has_sign:
+        cfg['x_min'] = -pow(2, x_width-1)
+        cfg['x_max'] = pow(2, x_width-1) - 1
+        cfg['y_min'] = -pow(2, y_width-1)
+        cfg['y_max'] = pow(2, y_width-1) - 1
+    else:
+        cfg['x_min'] = 0
+        cfg['x_max'] = pow(2, x_width) - 1
+        cfg['y_min'] = 0
+        cfg['y_max'] = pow(2, y_width) - 1
+
+    cfg['x_range'] = range(cfg['x_min'], cfg['x_max']+1)	# inclusive .. exclusive
+    cfg['y_range'] = range(cfg['y_min'], cfg['y_max']+1)
+    return cfg
+
+
+def mul_config_dump(cfg, logger=print, pfx=""):
+    seen_set = {}
+    keys = ['has_sign', 'x_width', 'y_width', 's_width', 'p_width', 'x_min', 'x_max', 'x_range', 'y_min', 'y_max', 'y_range']
+    for k in keys:
+        logger("{}{}={}".format(pfx, k, cfg.get(k)))
+        seen_set[k] = True
+    if cfg.get('x_range'):
+        logger("{}x_range=[{} ... {}]".format(pfx, min(cfg['x_range']), max(cfg['x_range'])))
+    if cfg.get('y_range'):
+        logger("{}y_range=[{} ... {}]".format(pfx, min(cfg['y_range']), max(cfg['y_range'])))
+    for k,v in cfg.items():	# catchall
+        if k not in seen_set:
+            logger("{}{}={}".format(pfx, k, v))
+
+
 
 
 def try_integer(v):
@@ -99,9 +150,10 @@ async def try_rst(dut):
 # h.randomSeed()	# print
 # wile(h.hasMore):
 #    h.setValue(dut)
-#    h.next()
+#    h.next()		# enumerate in consitent random order based on seed
 # 
-
+# TODO rerun with initialZ=0  initialZ=1  initialZ=RANDOM
+#
 
 #
 #
@@ -144,7 +196,17 @@ async def test_muls_x3y3(dut):
 #
 @cocotb.test()
 async def test_mulu_x3y3(dut):
+    cfg = mul_config_build(3, 3, False)
+    mul_config_dump(cfg, dut._log.info, 'cfg.')
+
+    # FIXME can apply this with annotatation and apply interceptor pattern around ?
+    with wavedrom_init(dut) as wave:
+        await do_test_mulu_x3y3(dut)
+    wavedrom_dumpj()
+
+async def do_test_mulu_x3y3(dut):
     report_resolvable(dut, 'initial ')
+    #await wavedrom_sample()
     clock = try_clk(dut)
     await try_rst(dut)
 
@@ -156,6 +218,7 @@ async def test_mulu_x3y3(dut):
     dut.x.value = 0
     dut.y.value = 0
     await ClockCycles(dut.clk, 1)
+    #await wavedrom_sample()
 
     report_resolvable(dut)
 
@@ -164,6 +227,7 @@ async def test_mulu_x3y3(dut):
         for y in y_range:
             dut.y.value = y
             await ClockCycles(dut.clk, 2)
+            #wavedrom_sample()
             dut._log.info("x={0} y={1} => p={2} {3}".format(x, y,
                 dut.p.value, try_integer(dut.p.value)))
             assert dut.p.value.is_resolvable
@@ -173,6 +237,7 @@ async def test_mulu_x3y3(dut):
                 (x * y)))
             assert dut.p.value.integer == (x * y)
 
+    #wavedrom_sample()
 
 #
 #
