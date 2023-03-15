@@ -151,7 +151,7 @@ async def test_mulu_x2y2(dut):
             assert dut.p.value.is_resolvable
 
 
-@cocotb.test()
+#@cocotb.test()
 async def test_halfadder(dut):
     report_resolvable(dut, 'initial ')
     clock = try_clk(dut)
@@ -173,36 +173,33 @@ async def test_halfadder(dut):
         for b in b_range:
             dut.b.value = b
             await ClockCycles(dut.clk, 2)
-            dut._log.info("x={0} y={1} => s={2} {3} c={4} {5}".format(a, b, dut.s.value, try_integer(dut.s.value,), dut.c.value, try_integer(dut.c.value)))
+            dut._log.info("x={0} y={1} => s={2} {3} c={4} {5}{6}".format(a, b,
+                dut.s.value, try_integer(dut.s.value),
+                dut.c.value, try_integer(dut.c.value),
+                '+' if(dut.c.value) else ''))
             assert dut.s.value.is_resolvable
             assert dut.c.value.is_resolvable
-
 
 #
 #
 # FIXME read data from fulladder.txt
 #
-#@cocotb.test()
+@cocotb.test()
 async def test_fulladder(dut):
     report_resolvable(dut, 'initial ')
     clock = try_clk(dut)
     await try_rst(dut)
 
-    # FIXME we're needing a clock but this is a combinational piece
-    #  work out how to configure cocotb for that and remove clock and clk input pin
-
-    width = x_width
-    ab_max = pow(2, x_width) - 1
+    width = dut.WIDTH.value
+    ab_max = pow(2, width) - 1
     a_range = range(0, ab_max+1)
     b_range = range(0, ab_max+1)
 
-    #dut._log.info("INITIAL OUTPUT s={0} co={1}".format(dut.s.value.binstr, dut.co.value.binstr))
+    dut.a.value = 0
+    dut.b.value = 0
+    await ClockCycles(dut.clk, 1)
 
-    # Need to do this here to lose the 'z' states
-    # There must be something wrong with the: await ClockCycles(dut.clk, 2) ?
-#    dut.a.value = 0
-#    dut.b.value = 0
-#    dut.ci.value = 0
+    report_resolvable(dut)
 
     for ci in (0, 1):
         dut.ci.value = ci
@@ -211,9 +208,9 @@ async def test_fulladder(dut):
             for b in b_range:
                 dut.b.value = b
                 await ClockCycles(dut.clk, 2)
+                dut._log.info("a={0} b={1} ci={2} => co={3} s={4} {5}{6}".format(a, b, ci,
+                    dut.co.value, dut.s.value,
+                    dut.s.value.integer,
+                    '+' if(dut.co.value) else ''))
                 assert dut.s.value.is_resolvable
                 assert dut.co.value.is_resolvable
-                #dut._log.info("a={0} b={1} ci={2} => co={3} s={4} {5}{6}".format(a, b, ci,
-                #    dut.co.value, dut.s.value,
-                #    dut.s.value.integer,
-                #    '+' if(dut.co.value) else ''))

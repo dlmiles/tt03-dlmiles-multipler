@@ -25,7 +25,8 @@ VERILOG_SOURCES += $(PDK_ROOT)/sky130B/libs.ref/sky130_fd_sc_hd/verilog/sky130_f
 VERILOG_SOURCES += $(PWD)/gate_level_netlist.v
 endif
 
-include $(PWD)/halfadder/Makefile
+#include $(PWD)/halfadder/Makefile
+include $(PWD)/fulladder/Makefile
 #include $(PWD)/mulu_x2y2/Makefile
 
 VERILOG_SOURCES += $(TB_VERILOG_SOURCES)

@@ -1,0 +1,2 @@
+
+`define	IMPL_FULLADDER		1
