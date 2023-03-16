@@ -33,7 +33,7 @@ module tb (
     end
 
     // wire up the inputs and outputs
-    wire [`INPUT_WIDTH-1:0] inputs = {2'b0, {y}, {x}, rst, clk};
+    wire [`INPUT_WIDTH-1:0] inputs = {{y}, {x}, rst, clk};
     wire [`OUTPUT_WIDTH-1:0] outputs;
     assign p = outputs[`O_P_BITID+`P_WIDTH-1:`O_P_BITID];	// 3:0
 `ifdef HAS_SIGN

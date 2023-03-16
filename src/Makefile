@@ -30,7 +30,8 @@ endif
 
 #include $(PWD)/halfadder/Makefile
 #include $(PWD)/fulladder/Makefile
-include $(PWD)/mulu_x2y2/Makefile
+#include $(PWD)/mulu_x2y2/Makefile
+include $(PWD)/mulu_x3y3/Makefile
 
 VERILOG_SOURCES += $(TB_VERILOG_SOURCES)
 
