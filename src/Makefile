@@ -44,4 +44,5 @@ include $(shell cocotb-config --makefiles)/Makefile.sim
 
 
 distclean: clean
+	$(RM) tb.vcd tb_*.vcd
 	$(RM) -r __pycache__
