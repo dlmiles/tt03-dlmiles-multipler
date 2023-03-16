@@ -5,6 +5,12 @@ parray ::env
 
 puts "PWD [::pwd]"
 
+# Due to the multiple directory native I need to setup for OpenLANE
+#   tcl ::env(VERILOG_INCLUDE_DIRS)
+#
+#
+#
+#
 #
 # The src/Makefile builds everything relative to the src dir.
 # So `include "config.vh" works from a sub-dir *.v, when the file is in src/
@@ -37,6 +43,7 @@ if { [info exists ::env(DESIGN_DIR)] } {
       set ::env(VERILOG_INCLUDE_DIRS) "$::env(DESIGN_DIR)"
     }
   }
+  puts "VERILOG_INCLUDE_DIRS = $::env(DESIGN_DIR)/include"
 }
 
 parray ::env
