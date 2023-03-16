@@ -6,9 +6,14 @@ project:
 # If using an HDL, set wokwi_id as 0 and uncomment and list your source files here. 
 # Source files must be in ./src and you must list each source file separately
   source_files:
+    - global.vh
+    - config.vh
+    - mulu_x3y3/config_mulu_x3y3.vh
+    - mulu_x3y3/mulu_x3y3.vh
     - mulu_x3y3/top_mulu_x3y3.v
     - mulu_x3y3/mulu_x3y3.v
     - halfadder/halfadder.v
+    - fulladder/fulladder.v
   top_module:  "top_mulu_x3y3"      # put the name of your top module here, make it unique by prepending your github username
 
 # Keep a track of the submission yaml
