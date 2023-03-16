@@ -26,7 +26,7 @@ module tb_mulu_x3y3 (
     // this part dumps the trace to a vcd file that can be viewed with GTKWave
     initial begin
         $dumpfile ("tb_mulu_x3y3.vcd");
-        $dumpvars (0, tb);
+        $dumpvars (0, tb_mulu_x3y3);
         #1;
     end
 

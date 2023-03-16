@@ -109,8 +109,19 @@ async def try_rst(dut):
 #
 #@cocotb.test()
 async def test_muls_x3y3(dut):
+    report_resolvable(dut, 'initial ')
     clock = try_clk(dut)
     await try_rst(dut)
+
+    width = dut.WIDTH.value
+    xy_max = pow(2, width) - 1
+    x_range = range(0, xy_max+1)
+    x_range = range(0, xy_max+1)
+
+    dut.x.value = 0
+    dut.y.value = 0
+    await ClockCycles(dut.clk, 1)
+
     report_resolvable(dut)
 
     for x in x_range:
@@ -118,24 +129,29 @@ async def test_muls_x3y3(dut):
         for y in y_range:
             dut.y.value = y
             await ClockCycles(dut.clk, 2)
-            dut._log.info("x={0} y={1} => s={2} p={3} {4} rdy={5}".format(x, y, dut.s.value, dut.p.value, try_integer(dut.p.value), dut.rdy.value))
+            dut._log.info("x={0} y={1} => s={2} p={3} {4}".format(x, y,
+                dut.s.value,
+                dut.p.value, try_integer(dut.p.value)))
             assert dut.s.value.is_resolvable
             assert dut.p.value.is_resolvable
-            assert dut.rdy.value.is_resolvable
-
-
+            assert dut.p.value.integer == (x * y)
 
 
 
 #
 #
-# FIXME read data from mulu_x2y2.txt
+# FIXME read data from mulu_x3y3.txt
 #
 @cocotb.test()
-async def test_mulu_x2y2(dut):
+async def test_mulu_x3y3(dut):
     report_resolvable(dut, 'initial ')
     clock = try_clk(dut)
     await try_rst(dut)
+
+    width = 3
+    xy_max = pow(2, width) - 1
+    x_range = range(0, xy_max+1)
+    y_range = range(0, xy_max+1)
 
     dut.x.value = 0
     dut.y.value = 0
@@ -151,6 +167,39 @@ async def test_mulu_x2y2(dut):
             dut._log.info("x={0} y={1} => p={2} {3}".format(x, y,
                 dut.p.value, try_integer(dut.p.value)))
             assert dut.p.value.is_resolvable
+            #assert dut.p.value.integer == (x * y)
+
+
+#
+#
+# FIXME read data from mulu_x2y2.txt
+#
+@cocotb.test()
+async def test_mulu_x2y2(dut):
+    report_resolvable(dut, 'initial ')
+    clock = try_clk(dut)
+    await try_rst(dut)
+
+    width = 2
+    xy_max = pow(2, width) - 1
+    x_range = range(0, xy_max+1)
+    y_range = range(0, xy_max+1)
+
+    dut.x.value = 0
+    dut.y.value = 0
+    await ClockCycles(dut.clk, 1)
+
+    report_resolvable(dut)
+
+    for x in x_range:
+        dut.x.value = x
+        for y in y_range:
+            dut.y.value = y
+            await ClockCycles(dut.clk, 2)
+            dut._log.info("x={0} y={1} => p={2} {3}".format(x, y,
+                dut.p.value, try_integer(dut.p.value)))
+            assert dut.p.value.is_resolvable
+            #assert dut.p.value.integer == (x * y)
 
 
 #@cocotb.test()
