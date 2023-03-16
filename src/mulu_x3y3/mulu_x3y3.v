@@ -81,13 +81,13 @@ module mulu_x3y3 (
     halfadder #(.WIDTH(1)) ha1_iy1_ix1_ip1
     (
                     .a  (pp[0][1]), //(acc[adix-1]),
-                    .b  (pp[0][2]), //(pp[adiy][adix-1]),
+                    .b  (pp[1][0]), //(pp[adiy][adix-1]),	// 0_2
                     .s  (ads[1]),   //(ads[adix]), // P1
                     .c  (adx[0])    //(acc[adix])  // to fa3_1_2_2ci
     );
     halfadder #(.WIDTH(1)) ha2_iy1_ix2_ipX
     (
-                    .a  (pp[1][0]), //(acc[adix-1]),
+                    .a  (pp[0][2]), //(acc[adix-1]),		// 1_0
                     .b  (pp[1][1]), //(pp[adiy][adix-1]),
                     .s  (adx[1]),   //(acc[adix])  // to fa3_1_2_2a
                     .c  (adx[2])    //(acc[adix])  // to fa4_?_?_Xci
@@ -95,14 +95,14 @@ module mulu_x3y3 (
     fulladder #(.WIDTH(1)) fa3_iy1_ix2_ip2
     (
                     .a  (adx[1]),   //(acc[adix-1]),  // from ha2_1_2_Xs
-                    .b  (pp[1][2]), //(pp[adiy][adix-1]),
+                    .b  (pp[2][0]), //(pp[adiy][adix-1]),		// 1_2
                     .ci (adx[0]),   //    from ha1_1_1_1c
                     .s  (ads[2]),   //(acc[adix])  // P2
                     .co (adx[3])    //(acc[adix])  // to ha5_?_?_3b
     );
     fulladder #(.WIDTH(1)) fa4_iy1_ix2_ipX
     (
-                    .a  (pp[2][0]), //(acc[adix-1]),  // from ha_1_2_Xs
+                    .a  (pp[1][2]), //(acc[adix-1]),  // from ha_1_2_Xs	// 2_0
                     .b  (pp[2][1]), //(pp[adiy][adix-1]),
                     .ci (adx[2]),   //    from ha2_1_2_Xc
                     .s  (adx[4]),   //(acc[adix])  // to ha5_?_?_?a
