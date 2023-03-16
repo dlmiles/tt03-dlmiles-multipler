@@ -6,10 +6,10 @@ project:
 # If using an HDL, set wokwi_id as 0 and uncomment and list your source files here. 
 # Source files must be in ./src and you must list each source file separately
   source_files:
-    - mulu_x2y2/top_mulu_x2y2.v
-    - mulu_x2y2/mulu_x2y2.v
+    - mulu_x3y3/top_mulu_x3y3.v
+    - mulu_x3y3/mulu_x3y3.v
     - halfadder/halfadder.v
-  top_module:  "top_mulu_x2y2"      # put the name of your top module here, make it unique by prepending your github username
+  top_module:  "top_mulu_x3y3"      # put the name of your top module here, make it unique by prepending your github username
 
 # Keep a track of the submission yaml
 yaml_version: 3.0
@@ -59,18 +59,18 @@ documentation:
     - reset
     - x_0
     - x_1
+    - x_2
     - y_0
     - y_1
-    - none
-    - none
+    - y_2
 # A description of what the outputs do
   outputs:
     - p_0
     - p_1
     - p_2
     - p_3
-    - none
-    - none
+    - p_4
+    - p_5
     - none
     - none
 
