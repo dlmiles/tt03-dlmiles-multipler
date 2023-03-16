@@ -6,6 +6,9 @@ runs
 src/sim_build
 src/__pycache__/
 src/results.xml
-src/user_config.tcl
+
+# Due to the multiple directory native I need to setup for OpenLANE
+#   tcl ::env(VERILOG_INCLUDE_DIRS)
+#src/user_config.tcl
 
 *~
