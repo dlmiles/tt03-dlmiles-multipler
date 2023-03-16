@@ -57,7 +57,7 @@ if { [info exists ::env(VERILOG_FILES)] } {
 if { [info exists ::env(DESIGN_DIR)] } {
   if { [file isdirectory "$::env(DESIGN_DIR)/include"] } {
     if { [info exists ::env(VERILOG_INCLUDE_DIRS)] } {
-      set ::env(VERILOG_INCLUDE_DIRS) "$::env(DESIGN_DIR)/include:$::env(VERILOG_INCLUDE_DIRS)"
+      set ::env(VERILOG_INCLUDE_DIRS) "$::env(DESIGN_DIR)/include $::env(VERILOG_INCLUDE_DIRS)"
     } else {
       # Don't create an empty path entry
       set ::env(VERILOG_INCLUDE_DIRS) "$::env(DESIGN_DIR)"
@@ -65,12 +65,14 @@ if { [info exists ::env(DESIGN_DIR)] } {
   } else {
     # Otherwise add in the DESIGN_DIR itself so it works like icarus/cocotb does locally
     # It is assumed DESIGN_DIR = gitproject/src at this time until this script is debugged/checked
-    if { [info exists ::env(VERILOG_INCLUDE_DIRS)] } {
-      set ::env(VERILOG_INCLUDE_DIRS) "$::env(DESIGN_DIR):$::env(VERILOG_INCLUDE_DIRS)"
-    } else {
-      # Don't create an empty path entry
-      set ::env(VERILOG_INCLUDE_DIRS) "$::env(DESIGN_DIR)"
-    }
+#    if { ![regexp "$::env(DESIGN_DIR)" $::env(VERILOG_INCLUDE_DIRS)] } {       # don't add if already there
+      if { [info exists ::env(VERILOG_INCLUDE_DIRS)] } {
+        set ::env(VERILOG_INCLUDE_DIRS) "$::env(DESIGN_DIR) $::env(VERILOG_INCLUDE_DIRS)"
+      } else {
+        # Don't create an empty path entry
+        set ::env(VERILOG_INCLUDE_DIRS) "$::env(DESIGN_DIR)"
+      }
+#    }
   }
   puts "VERILOG_INCLUDE_DIRS = $::env(DESIGN_DIR)/include"
 }
