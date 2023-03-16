@@ -14,6 +14,7 @@ project:
     - mulu_x3y3/mulu_x3y3.v
     - halfadder/halfadder.v
     - fulladder/fulladder.v
+    - config_extra.tcl
   top_module:  "top_mulu_x3y3"      # put the name of your top module here, make it unique by prepending your github username
 
 # Keep a track of the submission yaml
