@@ -5,6 +5,35 @@ parray ::env
 
 puts "PWD [::pwd]"
 
+# Ok so this file is activated by
+#  *  Checking it into the project as src/config_extra.tcl
+#  *  Editing config.tcl to include lines just below other 'source' directive:
+#    This is part of this project and the only edit to this file
+#    source $::env(DESIGN_DIR)/config_extra.tcl
+#  *  Adding the file to info.yaml/source_files as 'config_extra.tcl'
+
+# The purpose is to remove itself from the envvar $VERILOG_FILES because
+#  of the above method of adding and the tt-support-tools adding it even
+#  with *.tcl
+# Remove from $VERILOG_FILES: /work/src/config_extra.tcl
+if { [info exists ::env(VERILOG_FILES)] } {
+   set _verilog_files [list]
+
+   foreach item [regexp -all -inline {\S+} $::env(VERILOG_FILES)] {
+       if { ![regexp {\.tcl$} $item] } {       # remove *.tcl
+           # keep reset
+           lappend _verilog_files $item	
+       }
+   }
+   set _verilog_files_edited [join [list $_verilog_files] " "]
+
+   if { "$::env(VERILOG_FILES)" ne "$_verilog_files_edited" } {
+       set ::env(VERILOG_FILES) "$_verilog_files_edited"
+   }
+   puts "VERILOG_FILES = $::env(VERILOG_FILES)"
+}
+
+
 # Due to the multiple directory native I need to setup for OpenLANE
 #   tcl ::env(VERILOG_INCLUDE_DIRS)
 #
