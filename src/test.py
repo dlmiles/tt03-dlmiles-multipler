@@ -167,6 +167,10 @@ async def test_mulu_x3y3(dut):
             dut._log.info("x={0} y={1} => p={2} {3}".format(x, y,
                 dut.p.value, try_integer(dut.p.value)))
             assert dut.p.value.is_resolvable
+            if dut.p.value.integer != (x * y):
+                dut._log.warning("x={0} y={1} => p={2} {3} != {4}".format(x, y,
+                dut.p.value, try_integer(dut.p.value),
+                (x * y)))
             #assert dut.p.value.integer == (x * y)
 
 
@@ -199,6 +203,10 @@ async def test_mulu_x2y2(dut):
             dut._log.info("x={0} y={1} => p={2} {3}".format(x, y,
                 dut.p.value, try_integer(dut.p.value)))
             assert dut.p.value.is_resolvable
+            if dut.p.value.integer != (x * y):
+                dut._log.warning("x={0} y={1} => p={2} {3} != {4}".format(x, y,
+                dut.p.value, try_integer(dut.p.value),
+                (x * y)))
             #assert dut.p.value.integer == (x * y)
 
 
