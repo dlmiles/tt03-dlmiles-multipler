@@ -5,6 +5,7 @@
 SIM ?= icarus
 TOPLEVEL_LANG ?= verilog
 
+COMPILE_ARGS    += -I$(PWD)
 TB_VERILOG_SOURCES += $(PWD)/tb.v
 
 # normal simulation
