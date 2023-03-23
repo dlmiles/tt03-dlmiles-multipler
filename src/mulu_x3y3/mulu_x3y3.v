@@ -96,17 +96,17 @@ module mulu_x3y3 (
     (
                     .a  (adx[1]),   //(acc[adix-1]),  // from ha2_1_2_Xs
                     .b  (pp[2][0]), //(pp[adiy][adix-1]),		// 1_2
-                    .ci (adx[0]),   //    from ha1_1_1_1c
+                    .y  (adx[0]),   //    from ha1_1_1_1c
                     .s  (ads[2]),   //(acc[adix])  // P2
-                    .co (adx[3])    //(acc[adix])  // to ha5_?_?_3b
+                    .c  (adx[3])    //(acc[adix])  // to ha5_?_?_3b
     );
     fulladder #(.WIDTH(1)) fa4_iy1_ix2_ipX
     (
                     .a  (pp[1][2]), //(acc[adix-1]),  // from ha_1_2_Xs	// 2_0
                     .b  (pp[2][1]), //(pp[adiy][adix-1]),
-                    .ci (adx[2]),   //    from ha2_1_2_Xc
+                    .y  (adx[2]),   //    from ha2_1_2_Xc
                     .s  (adx[4]),   //(acc[adix])  // to ha5_?_?_?a
-                    .co (adx[5])    //(acc[adix])  // to fa6_?_?_4ci
+                    .c  (adx[5])    //(acc[adix])  // to fa6_?_?_4ci
     );
     halfadder #(.WIDTH(1)) ha5_iy1_ix2_ip3
     (
@@ -119,9 +119,9 @@ module mulu_x3y3 (
     (
                     .a  (pp[2][2]), //(acc[adix-1]),
                     .b  (adx[6]),   //(pp[adiy][adix-1]),  // from ha5_1_2_Xc
-                    .ci (adx[5]),   //    from fa4_1_2_Xco
+                    .y  (adx[5]),   //    from fa4_1_2_Xco
                     .s  (ads[4]),   //(acc[adix])  // P4
-                    .co (ads[5])    //(acc[adix])  // P5 MSB output
+                    .c  (ads[5])    //(acc[adix])  // P5 MSB output
     );
 
     // So this but become easy to see the product

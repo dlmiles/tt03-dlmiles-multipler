@@ -55,8 +55,8 @@ module tb (
 `endif
         .a  (inputs[2]),
         .b  (inputs[3]),
-        .s  (outputs[0]),
-        .c  (outputs[1])
+        .c  (outputs[6]),
+        .s  (outputs[7])
     );
 `endif
 
@@ -68,9 +68,9 @@ module tb (
 `endif
         .a  (inputs[2]),
         .b  (inputs[3]),
-        .ci (inputs[4]),
-        .s  (outputs[0]),
-        .co (outputs[1])
+        .y  (inputs[4]),
+        .c  (outputs[6]),
+        .s  (outputs[7])
     );
 `endif
 

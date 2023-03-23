@@ -6,15 +6,15 @@ module fulladder #(
 ) (
     input	[WIDTH-1:0]	a,
     input	[WIDTH-1:0]	b,
-    input			ci,
+    input			y,
 
-    output	[WIDTH-1:0]	s,
-    output			co
+    output			c,
+    output	[WIDTH-1:0]	s
 );
 
-    assign {co, s} = a + b + ci;
+    assign {c, s} = a + b + y;
 
-    //assign s = (a^b)^ci;
-    //assign co = (a & b) | (b & ci) | (a & ci);
+    //assign c = (a & b) | (b & y) | (a & y);
+    //assign s = (a^b)^y;
 
 endmodule

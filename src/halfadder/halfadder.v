@@ -13,11 +13,11 @@ module halfadder #(
     input	[WIDTH-1:0]	a,
     input	[WIDTH-1:0]	b,
 
-    output	[WIDTH-1:0]	s,
-    output	[WIDTH-1:0]	c
+    output	[WIDTH-1:0]	c,
+    output	[WIDTH-1:0]	s
 );
 
-    assign s = a ^ b;
     assign c = a & b;
+    assign s = a ^ b;
 
 endmodule

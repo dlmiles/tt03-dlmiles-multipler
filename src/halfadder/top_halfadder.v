@@ -16,18 +16,18 @@ module top_halfadder #(
     wire [`WIDTH-1:0] a = io_in[`I_A_BITID+`WIDTH-1:`I_A_BITID];	// [2:2]
     wire [`WIDTH-1:0] b = io_in[`I_B_BITID+`WIDTH-1:`I_B_BITID];	// [3:3]
 
-    wire s;
-    assign io_out[`O_SUM_BITID] = s;		// 6
     wire c;
-    assign io_out[`O_CARRY_BITID] = c;		// 7
+    assign io_out[`O_CARRY_BITID] = c;		// 6
+    wire s;
+    assign io_out[`O_SUM_BITID] = s;		// 7
 
     halfadder #(
       .WIDTH(WIDTH)
     ) halfadder(
       .a   (a),
       .b   (b),
-      .s   (s),
-      .c   (c)
+      .c   (c),
+      .s   (s)
     );
 
 endmodule

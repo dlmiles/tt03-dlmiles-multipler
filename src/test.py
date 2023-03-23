@@ -196,24 +196,24 @@ async def test_muls_x3y3(dut):
 #
 @cocotb.test()
 async def test_mulu_x3y3(dut):
-    cfg = mul_config_build(3, 3, False)
-    mul_config_dump(cfg, dut._log.info, 'cfg.')
-
     # FIXME can apply this with annotatation and apply interceptor pattern around ?
     with wavedrom_init(dut) as wave:
         await do_test_mulu_x3y3(dut)
     wavedrom_dumpj()
 
 async def do_test_mulu_x3y3(dut):
+    cfg = mul_config_build(3, 3, False)
+    mul_config_dump(cfg, dut._log.info, 'cfg.')
+
     report_resolvable(dut, 'initial ')
     #await wavedrom_sample()
     clock = try_clk(dut)
     await try_rst(dut)
 
-    width = 3
-    xy_max = pow(2, width) - 1
-    x_range = range(0, xy_max+1)
-    y_range = range(0, xy_max+1)
+    #width = 3
+    #xy_max = pow(2, width) - 1
+    #x_range = range(0, xy_max+1)
+    #y_range = range(0, xy_max+1)
 
     dut.x.value = 0
     dut.y.value = 0
@@ -222,9 +222,9 @@ async def do_test_mulu_x3y3(dut):
 
     report_resolvable(dut)
 
-    for x in x_range:
+    for x in cfg.get('x_range'):
         dut.x.value = x
-        for y in y_range:
+        for y in cfg.get('y_range'):
             dut.y.value = y
             await ClockCycles(dut.clk, 2)
             #wavedrom_sample()
@@ -325,16 +325,16 @@ async def test_fulladder(dut):
 
     report_resolvable(dut)
 
-    for ci in (0, 1):
-        dut.ci.value = ci
+    for y in (0, 1):
+        dut.y.value = y
         for a in a_range:
             dut.a.value = a
             for b in b_range:
                 dut.b.value = b
                 await ClockCycles(dut.clk, 2)
-                dut._log.info("a={0} b={1} ci={2} => co={3} s={4} {5}{6}".format(a, b, ci,
-                    dut.co.value, dut.s.value,
+                dut._log.info("a={0} b={1} y={2} => c={3} s={4} {5}{6}".format(a, b, y,
+                    dut.c.value, dut.s.value,
                     dut.s.value.integer,
-                    '+' if(dut.co.value) else ''))
+                    '+' if(dut.c.value) else ''))
                 assert dut.s.value.is_resolvable
-                assert dut.co.value.is_resolvable
+                assert dut.c.value.is_resolvable

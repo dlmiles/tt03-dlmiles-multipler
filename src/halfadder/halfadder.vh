@@ -8,5 +8,5 @@
 `define I_B_BITID	5
 
 // wire [7:0] io_out, interface
-`define O_SUM_BITID	6
-`define O_CARRY_BITID	7
+`define O_CARRY_BITID	6
+`define O_SUM_BITID	7

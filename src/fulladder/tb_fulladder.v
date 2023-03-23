@@ -10,14 +10,14 @@ module tb_fulladder #(
     parameter WIDTH = 1
 ) (
     // testbench is controlled by test.py
-    input clk,
+    input		clk,
 
-    input [WIDTH-1:0] a,
-    input [WIDTH-1:0] b,
-    input ci,
+    input [WIDTH-1:0]	a,
+    input [WIDTH-1:0]	b,
+    input		y,
 
-    output [WIDTH-1:0] s,
-    output co
+    output		c,
+    output [WIDTH-1:0]	s,
 );
 
     // this part dumps the trace to a vcd file that can be viewed with GTKWave
@@ -37,9 +37,9 @@ module tb_fulladder #(
 `endif
         .a  (a),
         .b  (b),
-        .ci (ci),
-        .s  (s),
-        .co (co)
+        .y  (y),
+        .c  (c),
+        .s  (s)
     );
 
 endmodule

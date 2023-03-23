@@ -18,8 +18,8 @@ module tb_halfadder #(
     input [WIDTH-1:0] a,
     input [WIDTH-1:0] b,
 
-    output [WIDTH-1:0] s,
-    output [WIDTH-1:0] c
+    output [WIDTH-1:0] c,
+    output [WIDTH-1:0] s
 );
 
     // this part dumps the trace to a vcd file that can be viewed with GTKWave
@@ -39,8 +39,8 @@ module tb_halfadder #(
 `endif
         .a  (a),
         .b  (b),
-        .s  (s),
-        .c  (c)
+        .c  (c),
+        .s  (s)
     );
 
 endmodule
