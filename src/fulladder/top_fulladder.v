@@ -5,7 +5,7 @@
 
 // This exists a a top level module for production wiring the ports up
 module top_fulladder #(
-    parameter WIDTH = 1
+    parameter	WIDTH = 1
 ) (
     input	[`INPUT_WIDTH-1:0]		io_in,
     output	[`OUTPUT_WIDTH-1:0]		io_out

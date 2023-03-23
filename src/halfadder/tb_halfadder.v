@@ -10,16 +10,16 @@ that can be driven / tested by the cocotb test.py
 */
 
 module tb_halfadder #(
-    parameter WIDTH = 1
+    parameter	WIDTH = 1
 ) (
     // testbench is controlled by test.py
-    input clk,
+    input			clk,
 
-    input [WIDTH-1:0] a,
-    input [WIDTH-1:0] b,
+    input	[WIDTH-1:0]	a,
+    input	[WIDTH-1:0]	b,
 
-    output [WIDTH-1:0] c,
-    output [WIDTH-1:0] s
+    output	[WIDTH-1:0]	c,
+    output	[WIDTH-1:0]	s
 );
 
     // this part dumps the trace to a vcd file that can be viewed with GTKWave
