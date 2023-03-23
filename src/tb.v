@@ -58,6 +58,7 @@ module tb (
         .c  (outputs[6]),
         .s  (outputs[7])
     );
+    assign outputs[5:0] = 6'b000000;	// pull-down unused for better clear wave
 `endif
 
 `ifdef IMPL_FULLADDER_NO
@@ -72,6 +73,7 @@ module tb (
         .c  (outputs[6]),
         .s  (outputs[7])
     );
+    assign outputs[5:0] = 6'b000000;	// pull-down unused for better clear wave
 `endif
 
 `ifdef IMPL_MULS_X3XY
