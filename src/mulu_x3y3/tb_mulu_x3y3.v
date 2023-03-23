@@ -11,15 +11,16 @@ that can be driven / tested by the cocotb test.py
 
 module tb_mulu_x3y3 (
     // testbench is controlled by test.py
-    input clk,
-    input [`X_WIDTH-1:0] x,
-    input [`Y_WIDTH-1:0] y,
-    output [`P_WIDTH-1:0] p
+    input			clk,
+    input	[`X_WIDTH-1:0]	x,
+    input	[`Y_WIDTH-1:0]	y,
+
+    output	[`P_WIDTH-1:0]	p
 `ifdef HAS_SIGN
-    , output s
+    , output			s
 `endif
 `ifdef HAS_READY
-    , output rdy
+    , output			rdy
 `endif
 );
 

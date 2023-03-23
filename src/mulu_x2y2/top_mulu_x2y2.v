@@ -5,7 +5,7 @@
 
 // This exists a a top level module for production wiring the ports up
 module top_mulu_x2y2 #(
-    parameter NOOP = 0
+    parameter	NOOP = 0
 ) (
     input	[`INPUT_WIDTH-1:0]		io_in,
     output	[`OUTPUT_WIDTH-1:0]		io_out
@@ -38,5 +38,7 @@ module top_mulu_x2y2 #(
       , .rdy (rdy)
 `endif
     );
+
+    assign io_out[`OUTPUT_WIDTH-1:`P_WIDTH] = `OUTPUT_WIDTH-`P_WIDTH'b0;    // [7:4] pull-down unused pins for clearer wave
 
 endmodule

@@ -5,7 +5,7 @@
 
 // This exists a a top level module for production wiring the ports up
 module top_mulu_x3y3 #(
-    parameter NOOP = 0
+    parameter	NOOP = 0
 ) (
     input	[`INPUT_WIDTH-1:0]		io_in,
     output	[`OUTPUT_WIDTH-1:0]		io_out
@@ -17,7 +17,7 @@ module top_mulu_x3y3 #(
     wire [`Y_WIDTH-1:0] y = io_in[`I_Y_BITID+`Y_WIDTH-1:`I_Y_BITID];	// [5:4]
 
     wire [`P_WIDTH-1:0] p;
-    assign io_out[`O_P_BITID+`P_WIDTH-1:`O_P_BITID] = p;	// [3:0]
+    assign io_out[`O_P_BITID+`P_WIDTH-1:`O_P_BITID] = p;	// [5:0]
 `ifdef HAS_SIGN
     wire s;
     assign io_out[`O_SIGN_BITID] = s;		// 6
@@ -38,5 +38,7 @@ module top_mulu_x3y3 #(
       , .rdy (rdy)
 `endif
     );
+
+    assign io_out[`OUTPUT_WIDTH-1:`P_WIDTH] = `OUTPUT_WIDTH-`P_WIDTH'b0;    // [7:6] pull-down unused pins for clearer wave
 
 endmodule
