@@ -24,15 +24,18 @@ def wavedrom_init(dut):
 def wavedrom_setup(dut):
     global waves
     waves = wavedrom_init(dut)
-    waves.__enter__()
-    return waves
+    return waves.__enter__()
 
-def wavedrom_dumpj():
+def wavedrom_dumpj(dut):
     global waves
+    filename = 'test_wavedrom.json'
     if waves is not None:
+        dut._log.debug(waves.dumpj())
+        dut._log.info("wavedrom_dumpj({})".format(filename))
         #waves.__exit__(0, 0, 0)
-        waves.write('test_wavedrom.json')
+        waves.write(filename, header="", footer="", config="")
         waves = None
+    # wavedrompy --input input.json --svg output.svg
 
 async def wavedrom_sample():
     global waves
@@ -199,7 +202,7 @@ async def test_mulu_x3y3(dut):
     # FIXME can apply this with annotatation and apply interceptor pattern around ?
     with wavedrom_init(dut) as wave:
         await do_test_mulu_x3y3(dut)
-    wavedrom_dumpj()
+        wavedrom_dumpj(dut)
 
 async def do_test_mulu_x3y3(dut):
     cfg = mul_config_build(3, 3, False)
@@ -218,7 +221,6 @@ async def do_test_mulu_x3y3(dut):
     dut.x.value = 0
     dut.y.value = 0
     await ClockCycles(dut.clk, 1)
-    #await wavedrom_sample()
 
     report_resolvable(dut)
 
@@ -227,7 +229,6 @@ async def do_test_mulu_x3y3(dut):
         for y in cfg.get('y_range'):
             dut.y.value = y
             await ClockCycles(dut.clk, 2)
-            #wavedrom_sample()
             dut._log.info("x={0} y={1} => p={2} {3}".format(x, y,
                 dut.p.value, try_integer(dut.p.value)))
             assert dut.p.value.is_resolvable
@@ -237,7 +238,6 @@ async def do_test_mulu_x3y3(dut):
                 (x * y)))
             assert dut.p.value.integer == (x * y)
 
-    #wavedrom_sample()
 
 #
 #
