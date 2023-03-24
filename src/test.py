@@ -197,7 +197,7 @@ async def test_muls_x3y3(dut):
 #
 # FIXME read data from mulu_x3y3.txt
 #
-@cocotb.test()
+#@cocotb.test()
 async def test_mulu_x3y3(dut):
     # FIXME can apply this with annotatation and apply interceptor pattern around ?
     with wavedrom_init(dut) as wave:
@@ -338,3 +338,30 @@ async def test_fulladder(dut):
                     '+' if(dut.c.value) else ''))
                 assert dut.s.value.is_resolvable
                 assert dut.c.value.is_resolvable
+
+
+# ones-compliment test
+@cocotb.test()
+async def test_ones(dut):
+    report_resolvable(dut, 'initial ')
+    clock = try_clk(dut)
+    await try_rst(dut)
+
+    width = dut.WIDTH.value
+    i_max = pow(2, width) - 1
+    i_range = range(0, i_max+1)
+
+    dut.i.value = 0
+    await ClockCycles(dut.clk, 1)
+
+    report_resolvable(dut)
+
+    for i in i_range:
+        dut.i.value = i
+        await ClockCycles(dut.clk, 2)
+        dut._log.info("i={0} => o={1}  neg({2})={3}".format(i,
+            dut.o.value, try_integer(dut.o.value),
+            i,
+            ~i));
+        assert dut.o.value.is_resolvable
+        #assert dut.outputs.value.is_resolvable
