@@ -342,7 +342,7 @@ async def test_fulladder(dut):
 
 
 # twos-compliment test
-@cocotb.test()
+#@cocotb.test()
 async def test_twos(dut):
     report_resolvable(dut, 'initial ')
     clock = try_clk(dut)
@@ -371,7 +371,7 @@ async def test_twos(dut):
 
 
 # ones-compliment test
-#@cocotb.test()
+@cocotb.test()
 async def test_ones(dut):
     report_resolvable(dut, 'initial ')
     clock = try_clk(dut)

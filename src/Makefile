@@ -28,8 +28,8 @@ endif
 
 # @also config.vh: pick correct `define
 
-#include $(PWD)/ones/Makefile
-include $(PWD)/twos/Makefile
+include $(PWD)/ones/Makefile
+#include $(PWD)/twos/Makefile
 #include $(PWD)/halfadder/Makefile
 #include $(PWD)/fulladder/Makefile
 #include $(PWD)/mulu_x2y2/Makefile

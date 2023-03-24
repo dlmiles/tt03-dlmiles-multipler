@@ -4,7 +4,7 @@
 ifneq ($(GATES),yes)
 # normal simulation
 
-#SIM_ARGS        += -DIMPL_HALFADDER
+#SIM_ARGS        += -DIMPL_ONES
 VERILOG_SOURCES += $(PWD)/ones/config_ones.vh
 VERILOG_SOURCES += $(PWD)/ones/top_ones.v
 VERILOG_SOURCES += $(PWD)/ones/ones.v
