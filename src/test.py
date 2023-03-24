@@ -5,6 +5,7 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge, FallingEdge, Timer, ClockCycles
 from cocotb.wavedrom import trace
+from cocotb.binary import BinaryValue
 
 waves = None
 
@@ -340,15 +341,15 @@ async def test_fulladder(dut):
                 assert dut.c.value.is_resolvable
 
 
-# ones-compliment test
+# twos-compliment test
 @cocotb.test()
-async def test_ones(dut):
+async def test_twos(dut):
     report_resolvable(dut, 'initial ')
     clock = try_clk(dut)
     await try_rst(dut)
 
     width = dut.WIDTH.value
-    i_max = pow(2, width) - 1
+    i_max = pow(2, width) - 1	# also mask
     i_range = range(0, i_max+1)
 
     dut.i.value = 0
@@ -359,9 +360,40 @@ async def test_ones(dut):
     for i in i_range:
         dut.i.value = i
         await ClockCycles(dut.clk, 2)
-        dut._log.info("i={0} => o={1}  neg({2})={3}".format(i,
+        expected_value = -i & i_max
+        dut._log.info("i={0} {1:2d} => o={2} {3:2d}  (-{4})={5}".format(BinaryValue(i, n_bits=width), i,
             dut.o.value, try_integer(dut.o.value),
             i,
-            ~i));
+            expected_value))
         assert dut.o.value.is_resolvable
+        assert dut.o.value == expected_value
+        #assert dut.outputs.value.is_resolvable
+
+
+# ones-compliment test
+#@cocotb.test()
+async def test_ones(dut):
+    report_resolvable(dut, 'initial ')
+    clock = try_clk(dut)
+    await try_rst(dut)
+
+    width = dut.WIDTH.value
+    i_max = pow(2, width) - 1	# also mask
+    i_range = range(0, i_max+1)
+
+    dut.i.value = 0
+    await ClockCycles(dut.clk, 1)
+
+    report_resolvable(dut)
+
+    for i in i_range:
+        dut.i.value = i
+        await ClockCycles(dut.clk, 2)
+        expected_value = ~i & i_max
+        dut._log.info("i={0} {1:2d} => o={2} {3:2d} neg({4})={5}".format(BinaryValue(i, n_bits=width), i,
+            dut.o.value, try_integer(dut.o.value),
+            i,
+            expected_value));
+        assert dut.o.value.is_resolvable
+        assert dut.o.value == expected_value
         #assert dut.outputs.value.is_resolvable

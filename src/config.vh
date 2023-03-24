@@ -1,6 +1,7 @@
 
 // @also Makefile: pick correct include
 //`define	IMPL_ONES		1
+`define	IMPL_TWOS		1
 //`define	IMPL_HALFADDER		1
 //`define	IMPL_FULLADDER		1
 //`define	IMPL_MULU_X2Y2		1
@@ -8,6 +9,10 @@
 
 `ifdef IMPL_ONES
 `include "ones/ones.vh"
+`endif
+
+`ifdef IMPL_TWOS
+`include "twos/twos.vh"
 `endif
 
 `ifdef IMPL_HALFADDER
