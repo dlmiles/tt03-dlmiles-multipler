@@ -38,7 +38,7 @@ module twos #(
         for (geni = 0; geni < WIDTH; geni = geni + 1) begin			// loop WIDTH times, from 0
             halfadder #(
                 .WIDTH(1)
-                ) ha (
+            ) ha (
                 .a  (tmp[geni]),
                 .b  (neg[geni]),
                 .c  (tmp[geni+1]),
