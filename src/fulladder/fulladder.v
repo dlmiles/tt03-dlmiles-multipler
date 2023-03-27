@@ -8,6 +8,7 @@
 //
 //
 module fulladder #(
+    // Ripple Carry Adder when Width > 1
     parameter	WIDTH = 1
 ) (
     input	[WIDTH-1:0]	a,
