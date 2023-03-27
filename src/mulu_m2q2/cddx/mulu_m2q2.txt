@@ -1,0 +1,10 @@
+* Netlist created with www.circuit-diagram.org
+* MULU M2Q2
+'nand2 out:0 in0:1 in1:2 t=NAND
+'nand2 in0:0 in1:3 out:4 t=NAND
+'xor2 in1:3 in0:0 out:5 t=XOR
+'xor2 in1:2 in0:1 out:6 t=XOR
+'and2 out:3 in0:7 in1:8 t=AND
+'and2 in0:7 out:2 in1:9 t=AND
+'and2 out:1 in0:10 in1:8 t=AND
+'and2 in1:9 in0:10 out:11 t=AND

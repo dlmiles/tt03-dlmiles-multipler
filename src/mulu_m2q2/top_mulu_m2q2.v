@@ -1,12 +1,10 @@
 `default_nettype none
 
 `include "global.vh"
-`include "config.vh"	// mulu_x2y2.vh
+`include "config.vh"	// mulu_m2q2.vh
 
 // This exists a a top level module for production wiring the ports up
-module top_mulu_x2y2 #(
-    parameter	NOOP = 0
-) (
+module top_mulu_m2q2 (
     input	[`INPUT_WIDTH-1:0]		io_in,
     output	[`OUTPUT_WIDTH-1:0]		io_out
 );
@@ -27,7 +25,7 @@ module top_mulu_x2y2 #(
     assign io_out[`O_READY_BITID] = rdy;	// 7
 `endif
 
-    mulu_x2y2 mulu_x2y2(
+    mulu_m2q2 mulu_m2q2(
         .x   (x),
         .y   (y),
         .p   (p)
@@ -39,6 +37,6 @@ module top_mulu_x2y2 #(
 `endif
     );
 
-    assign io_out[`OUTPUT_WIDTH-1:`P_WIDTH] = `OUTPUT_WIDTH-`P_WIDTH'b0;    // [7:4] pull-down unused pins for clearer wave
+    assign io_out[`OUTPUT_WIDTH-1:`P_WIDTH] = `OUTPUT_WIDTH-`P_WIDTH'b0;    // [7:6] pull-down unused pins for Z-state clear wave
 
 endmodule

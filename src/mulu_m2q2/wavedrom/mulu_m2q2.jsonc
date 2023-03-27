@@ -1,0 +1,22 @@
+# This format is for wavedrom tool
+# .jsonc comment's need to be removed  first
+{ "assign":[
+  ["p0", ["&", ["m0", "q0"]]	# pp0
+  ],
+  ["p1", ["^",			# ha1.s
+    ["&", ["m0", "q1"]],	# pp1
+    ["&", ["m1", "q0"]]]	# pp2
+  ],
+  ["p2", ["^",			# ha2.s
+    ["&",			# ha1.c
+      ["&", ["m0", "q1"]],	# pp1
+      ["&", ["m1", "q0"]]],	# pp2
+    ["&", ["m1", "q1"]]		# pp3
+  ]],
+  ["p3", ["&",			# ha2.c
+    ["&",			# ha1.c
+      ["&", ["m0", "q1"]],	# pp1
+      ["&", ["m1", "q0"]]],	# pp2
+    ["&", ["m1", "q1"]]		# pp3
+  ]]
+]}
