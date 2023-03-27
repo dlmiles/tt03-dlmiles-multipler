@@ -1,11 +1,12 @@
 
 // @also Makefile: pick correct include
-`define	IMPL_ONES		1
+//`define	IMPL_ONES		1
 //`define	IMPL_TWOS		1
 //`define	IMPL_HALFADDER		1
 //`define	IMPL_FULLADDER		1
-//`define	IMPL_MULU_X2Y2		1
-//`define	IMPL_MULU_X3Y3		1
+//`define	IMPL_MULU_M2Q2		1
+//`define	IMPL_MULU_M3Q3		1
+//`define	IMPL_MULU_M7Q7		1
 
 `ifdef IMPL_ONES
 `include "ones/ones.vh"
@@ -23,10 +24,14 @@
 `include "fulladder/fulladder.vh"
 `endif
 
-`ifdef IMPL_MULU_X2Y2
-`include "mulu_x2y2/mulu_x2y2.vh"
+`ifdef IMPL_MULU_M2Q2
+`include "mulu_m2q2/mulu_m2q2.vh"
 `endif
 
-`ifdef IMPL_MULU_X3Y3
-`include "mulu_x3y3/mulu_x3y3.vh"
+`ifdef IMPL_MULU_M3Q3
+`include "mulu_m3q3/mulu_m3q3.vh"
+`endif
+
+`ifdef IMPL_MULU_M7Q7
+`include "mulu_m7q7/mulu_m7q7.vh"
 `endif

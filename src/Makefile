@@ -28,12 +28,27 @@ endif
 
 # @also config.vh: pick correct `define
 
-include $(PWD)/ones/Makefile
-#include $(PWD)/twos/Makefile
-#include $(PWD)/halfadder/Makefile
-#include $(PWD)/fulladder/Makefile
-#include $(PWD)/mulu_x2y2/Makefile
-#include $(PWD)/mulu_x3y3/Makefile
+ifeq ($(IMPL_ONES),1)
+ include $(PWD)/ones/Makefile
+endif
+ifeq ($(IMPL_TWOS),1)
+ include $(PWD)/twos/Makefile
+endif
+ifeq ($(IMPL_HALFADDER),1)
+ include $(PWD)/halfadder/Makefile
+endif
+ifeq ($(IMPL_FULLADDER),1)
+ include $(PWD)/fulladder/Makefile
+endif
+ifeq ($(IMPL_MULU_M2Q2),1)
+ include $(PWD)/mulu_m2q2/Makefile
+endif
+ifeq ($(IMPL_MULU_M3Q3),1)
+ include $(PWD)/mulu_m3q3/Makefile
+endif
+ifeq ($(IMPL_MULU_M7Q7),1)
+ include $(PWD)/mulu_m7q7/Makefile
+endif
 
 VERILOG_SOURCES += $(TB_VERILOG_SOURCES)
 

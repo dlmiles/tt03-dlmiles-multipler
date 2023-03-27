@@ -76,8 +76,8 @@ module tb (
     assign outputs[5:0] = 6'b000000;	// pull-down unused for better clear wave
 `endif
 
-`ifdef IMPL_MULS_X3XY
-    top_muls_x3y3 multipler_signed_x3y3(
+`ifdef IMPL_MULS_M3Q3
+    top_muls_m3q3 multipler_signed_m3q3 (
 `ifdef GL_TEST
         .vccd1( 1'b1),
         .vssd1( 1'b0),
@@ -87,8 +87,8 @@ module tb (
     );
 `endif
 
-`ifdef IMPL_MULU_X2Y2
-    top_mulu_x2y2 multiplier_unsigned_x2y2 (
+`ifdef IMPL_MULU_M2Q2
+    top_mulu_m2q2 multiplier_unsigned_m2q2 (
 `ifdef GL_TEST
         .vccd1( 1'b1),
         .vssd1( 1'b0),
@@ -98,8 +98,8 @@ module tb (
     );
 `endif
 
-`ifdef IMPL_MULU_X3Y3
-    top_mulu_x3y3 multiplier_unsigned_x3y3 (
+`ifdef IMPL_MULU_M3Q3
+    top_mulu_m3q3 multiplier_unsigned_m3q3 (
 `ifdef GL_TEST
         .vccd1( 1'b1),
         .vssd1( 1'b0),

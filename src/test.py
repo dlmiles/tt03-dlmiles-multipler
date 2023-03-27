@@ -9,17 +9,38 @@ from cocotb.binary import BinaryValue
 
 waves = None
 
+def signal_autodetect_name(dut, *args):
+    list = []
+    for name in args:
+        ele = design_element(dut, name)
+        if ele is not None:
+            list.append(name)
+    return list
+
+def signal_autodetect(dut, *args):
+    list = []
+    for name in args:
+        ele = design_element(dut, name)
+        if ele is not None:
+            list.append(ele)
+    return list
+
 # Move to utils.wavedrom ?
 #@cocotb.before()
 def wavedrom_init(dut):
     global waves
-    # clk, fakeclk (for comb/async)
-    # rst, reset, rstn, resetn, reset_n
-    # input, io_in, io_input, in, inputs
-    # output, io_out, io_output, out, outputs
-    #a = [dut.clk, dut.rst, dut.x, dut.y, dut.p, input, output]
-    # dut.io_in, dut.io_out
-    waves = trace(dut.clk, dut.rst, dut.x, dut.y, dut.p, dut.inputs, dut.outputs, clk=dut.clk)
+    list = []
+    list += signal_autodetect(dut, 'clk', 'fakeclk')	# fakeclk: (for comb/async)
+    list += signal_autodetect(dut, 'rst', 'reset', 'rstn', 'resetn', 'reset_n')
+    list += signal_autodetect(dut, 'input', 'io_in', 'io_input', 'in', 'inputs', 'in7')
+    list += signal_autodetect(dut, 'output', 'io_out', 'io_output', 'out', 'outputs', 'out8')
+    list += signal_autodetect(dut, 'x', 'y', 'p')
+    list += signal_autodetect(dut, 'inputs', 'outputs')
+    for n in list:
+        dut._log.info("AUTO {}".format(n._name))
+    #waves = trace(dut.clk, dut.rst, dut.x, dut.y, dut.p, dut.inputs, dut.outputs, clk=dut.clk)
+    #waves = trace(dut.clk, dut.in7, dut.out8, dut.inputs, dut.outputs, clk=dut.clk)
+    waves = trace(*list, clk=dut.clk)
     return waves
 
 def wavedrom_setup(dut):
@@ -92,9 +113,21 @@ def mul_config_dump(cfg, logger=print, pfx=""):
 
 
 def try_integer(v):
+    if type(v) is int:
+        return v
     if v.is_resolvable:
         return v.integer
     return v
+
+def try_binary(v, width=None):
+    if type(v) is BinaryValue:
+        return v
+    if type(v) is str:
+        return v
+    if width is None:
+        return BinaryValue(v)
+    else:
+        return BinaryValue(v, n_bits=width)
 
 def try_name(v):
     if v._name:
@@ -159,12 +192,171 @@ async def try_rst(dut):
 # TODO rerun with initialZ=0  initialZ=1  initialZ=RANDOM
 #
 
+
 #
 #
-# FIXME read data from muls_x3y3.txt
+# FIXME read data from mulu_m7q7.txt
 #
-#@cocotb.test()
-async def test_muls_x3y3(dut):
+@cocotb.test()
+async def test_mulu_m7q7(dut):
+    # FIXME can apply this with annotatation and apply interceptor pattern around ?
+    with wavedrom_init(dut) as wave:
+        await do_test_mulu_m7q7(dut)
+        wavedrom_dumpj(dut)
+
+async def do_test_mulu_m7q7(dut):
+    cfg = mul_config_build(7, 7, False)
+    mul_config_dump(cfg, dut._log.info, 'cfg.')
+
+    report_resolvable(dut, 'initial ')
+    #await wavedrom_sample()
+    clock = try_clk(dut)
+    await try_rst(dut)
+
+    dut.in7.value = 0
+    await ClockCycles(dut.clk, 1)
+
+    report_resolvable(dut)
+    data = {}
+
+    for x in cfg.get('x_range'):
+        # FIXME for code-debug-test remove for production sign-off
+        #if x > 12 and x < 126:
+        #    continue
+
+        for y in cfg.get('y_range'):
+            # FIXME for code-debug-test remove for production sign-off
+            #if y > 12 and y < 126:
+            #    continue
+
+            data['have_op'] = True
+
+            p_fall = dut.out8.value
+            if p_fall.is_resolvable:
+                p_fall_1 = p_fall >> 1
+            else:
+                dut._log.info("p_fall={}".format(p_fall))
+                p_fall_1 = p_fall	# !is_resolvable
+            data['p_fall'] = p_fall
+            data['p_fall_1'] = p_fall_1
+
+            dut.in7.value = y
+            data['y_next'] = y
+
+            await RisingEdge(dut.clk)
+
+            p_rise = dut.out8.value
+            if p_rise.is_resolvable:
+                p_rise_1 = p_rise >> 1
+            else:
+                dut._log.info("p_rise={}".format(p_rise))
+                p_rise_1 = p_rise	# !is_resolvable
+            data['p_rise'] = p_rise
+            data['p_rise_1'] = p_rise_1
+
+            dut.in7.value = x
+            data['x_next'] = x
+
+            await FallingEdge(dut.clk)
+
+            # shift down 1 as out8.bit1 is the product bit0
+            if data['p_rise'].is_resolvable and data['p_fall'].is_resolvable:
+                data['p'] = (data['p_rise_1'] << 7) | data['p_fall_1']
+            else:
+                data['p'] = "UNKNOWN"
+
+            data['have_result'] = 'x' in data and 'y' in data   # we use inputs given, as we want to see bad outputs
+
+            if data['have_result']:
+                dut._log.info("x={0:3d} {1}  y={2:3d} {3}  =>  p={4:5d} {5}  p_rise_hi={6:3d} {7}  p_fall_lo={8:3d} {9}".format(
+                    data['x'], try_binary(data['x'], cfg['x_width']),
+                    data['y'], try_binary(data['y'], cfg['y_width']),
+                    data['p'], try_binary(data['p'], cfg['p_width']),
+                    data['p_rise_1'], try_binary(data['p_rise_1'], 7),
+                    data['p_fall_1'], try_binary(data['p_fall_1'], 7)
+                    ))
+                data['have_result'] = False
+
+                expectedValue_p = data['x'] * data['y']
+                assert(data['p'] == expectedValue_p)
+
+            if 'x_next' in data:
+                data['x'] = data['x_next']
+                del data['x_next']
+            if 'y_next' in data:
+                data['y'] = data['y_next']
+                del data['y_next']
+            data['have_op'] = 'x' in data and 'y' in data
+
+    if True:	# indentation cheat
+        if data['have_op']:
+            p_fall = dut.out8.value
+            if p_fall.is_resolvable:
+                p_fall_1 = p_fall >> 1
+            else:
+                dut._log.info("p_fall={}".format(p_fall))
+                p_fall_1 = p_fall	# !is_resolvable
+            data['p_fall'] = p_fall
+            data['p_fall_1'] = p_fall_1
+
+            await RisingEdge(dut.clk)
+
+            p_rise = dut.out8.value
+            if p_rise.is_resolvable:
+                p_rise_1 = p_rise >> 1
+            else:
+                dut._log.info("p_rise={}".format(p_rise))
+                p_rise_1 = p_rise	# !is_resolvable
+            data['p_rise'] = p_rise
+            data['p_rise_1'] = p_rise_1
+
+
+            # shift down 1 as out8.bit1 is the product bit0
+            if data['p_rise'].is_resolvable and data['p_fall'].is_resolvable:
+                data['p'] = (data['p_rise_1'] << 7) | data['p_fall_1']
+            else:
+                data['p'] = "UNKNOWN"
+
+            data['have_result'] = 'x' in data and 'y' in data	# we use inputs given, as we want to see bad outputs
+
+            if data['have_result']:
+                dut._log.info("x={0:3d} {1}  y={2:3d} {3}  =>  p={4:5d} {5}  p_rise_hi={6:3d} {7}  p_fall_lo={8:3d} {9}".format(
+                    data['x'], try_binary(data['x'], cfg['x_width']),
+                    data['y'], try_binary(data['y'], cfg['y_width']),
+                    data['p'], try_binary(data['p'], cfg['p_width']),
+                    data['p_rise_1'], try_binary(data['p_rise_1'], 7),
+                    data['p_fall_1'], try_binary(data['p_fall_1'], 7)
+                    ))
+                data['have_result'] = False
+
+                expectedValue_p = data['x'] * data['y']
+                assert(data['p'] == expectedValue_p)
+
+            if 'x_next' in data:
+                data['x'] = data['x_next']
+                del data['x_next']
+            if 'y_next' in data:
+                data['y'] = data['y_next']
+                del data['y_next']
+            data['have_op'] = 'x' in data and 'y' in data
+
+
+#            assert dut.p.value.is_resolvable
+#            if dut.p.value.integer != (x * y):
+#                dut._log.warning("x={0} y={1} => p={2} {3} != {4}".format(x, y,
+#                dut.p.value, try_integer(dut.p.value),
+#                (x * y)))
+#            assert dut.p.value.integer == (x * y)
+
+
+
+
+#
+#
+# FIXME read data from muls_m3y3.txt
+#
+@cocotb.test()
+async def test_muls_m3y3(dut):
     report_resolvable(dut, 'initial ')
     clock = try_clk(dut)
     await try_rst(dut)
@@ -196,16 +388,16 @@ async def test_muls_x3y3(dut):
 
 #
 #
-# FIXME read data from mulu_x3y3.txt
+# FIXME read data from mulu_m3q3.txt
 #
-#@cocotb.test()
-async def test_mulu_x3y3(dut):
+@cocotb.test()
+async def test_mulu_m3q3(dut):
     # FIXME can apply this with annotatation and apply interceptor pattern around ?
     with wavedrom_init(dut) as wave:
-        await do_test_mulu_x3y3(dut)
+        await do_test_mulu_m3q3(dut)
         wavedrom_dumpj(dut)
 
-async def do_test_mulu_x3y3(dut):
+async def do_test_mulu_m3q3(dut):
     cfg = mul_config_build(3, 3, False)
     mul_config_dump(cfg, dut._log.info, 'cfg.')
 
@@ -230,6 +422,7 @@ async def do_test_mulu_x3y3(dut):
         for y in cfg.get('y_range'):
             dut.y.value = y
             await ClockCycles(dut.clk, 2)
+
             dut._log.info("x={0} y={1} => p={2} {3}".format(x, y,
                 dut.p.value, try_integer(dut.p.value)))
             assert dut.p.value.is_resolvable
@@ -242,10 +435,10 @@ async def do_test_mulu_x3y3(dut):
 
 #
 #
-# FIXME read data from mulu_x2y2.txt
+# FIXME read data from mulu_m2q2.txt
 #
-#@cocotb.test()
-async def test_mulu_x2y2(dut):
+@cocotb.test()
+async def test_mulu_m2q2(dut):
     report_resolvable(dut, 'initial ')
     clock = try_clk(dut)
     await try_rst(dut)
@@ -266,6 +459,7 @@ async def test_mulu_x2y2(dut):
         for y in y_range:
             dut.y.value = y
             await ClockCycles(dut.clk, 2)
+
             dut._log.info("x={0} y={1} => p={2} {3}".format(x, y,
                 dut.p.value, try_integer(dut.p.value)))
             assert dut.p.value.is_resolvable
@@ -276,7 +470,7 @@ async def test_mulu_x2y2(dut):
             assert dut.p.value.integer == (x * y)
 
 
-#@cocotb.test()
+@cocotb.test()
 async def test_halfadder(dut):
     report_resolvable(dut, 'initial ')
     clock = try_clk(dut)
@@ -298,6 +492,7 @@ async def test_halfadder(dut):
         for b in b_range:
             dut.b.value = b
             await ClockCycles(dut.clk, 2)
+
             dut._log.info("x={0} y={1} => s={2} {3} c={4} {5}{6}".format(a, b,
                 dut.s.value, try_integer(dut.s.value),
                 dut.c.value, try_integer(dut.c.value),
@@ -309,19 +504,24 @@ async def test_halfadder(dut):
 #
 # FIXME read data from fulladder.txt
 #
-#@cocotb.test()
+@cocotb.test()
 async def test_fulladder(dut):
     report_resolvable(dut, 'initial ')
     clock = try_clk(dut)
     await try_rst(dut)
 
     width = dut.WIDTH.value
-    ab_max = pow(2, width) - 1
+    ab_base = pow(2, width)
+    ab_max = ab_base - 1
     a_range = range(0, ab_max+1)
     b_range = range(0, ab_max+1)
+    dut._log.info("PARAMS width={} ab_base={} ab_max={} a_range={} b_range={}".format(
+        width, ab_base, ab_max, a_range, b_range
+    ))
 
     dut.a.value = 0
     dut.b.value = 0
+    dut.y.value = 0
     await ClockCycles(dut.clk, 1)
 
     report_resolvable(dut)
@@ -332,17 +532,24 @@ async def test_fulladder(dut):
             dut.a.value = a
             for b in b_range:
                 dut.b.value = b
-                await ClockCycles(dut.clk, 2)
+                await ClockCycles(dut.clk, 1)
+
+                total = a + b + y
+                expectedValue_s = total % ab_base
+                expectedValue_c = 0 if(total <= ab_max) else 1
+
                 dut._log.info("a={0} b={1} y={2} => c={3} s={4} {5}{6}".format(a, b, y,
-                    dut.c.value, dut.s.value,
-                    dut.s.value.integer,
+                    dut.c.value,
+                    dut.s.value, try_integer(dut.s.value),
                     '+' if(dut.c.value) else ''))
                 assert dut.s.value.is_resolvable
                 assert dut.c.value.is_resolvable
+                assert dut.s.value == expectedValue_s
+                assert dut.c.value == expectedValue_c
 
 
 # twos-compliment test
-#@cocotb.test()
+@cocotb.test()
 async def test_twos(dut):
     report_resolvable(dut, 'initial ')
     clock = try_clk(dut)
@@ -360,7 +567,9 @@ async def test_twos(dut):
     for i in i_range:
         dut.i.value = i
         await ClockCycles(dut.clk, 2)
+
         expected_value = -i & i_max
+
         dut._log.info("i={0} {1:2d} => o={2} {3:2d}  (-{4})={5}".format(BinaryValue(i, n_bits=width), i,
             dut.o.value, try_integer(dut.o.value),
             i,
@@ -389,7 +598,9 @@ async def test_ones(dut):
     for i in i_range:
         dut.i.value = i
         await ClockCycles(dut.clk, 2)
+
         expected_value = ~i & i_max
+
         dut._log.info("i={0} {1:2d} => o={2} {3:2d} neg({4})={5}".format(BinaryValue(i, n_bits=width), i,
             dut.o.value, try_integer(dut.o.value),
             i,
