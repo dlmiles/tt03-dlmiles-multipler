@@ -4,9 +4,7 @@
 `include "config.vh"	// mulu_x3y3.vh
 
 // This exists a a top level module for production wiring the ports up
-module top_mulu_x3y3 #(
-    parameter	NOOP = 0
-) (
+module top_mulu_x3y3 (
     input	[`INPUT_WIDTH-1:0]		io_in,
     output	[`OUTPUT_WIDTH-1:0]		io_out
 );
