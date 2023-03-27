@@ -13,9 +13,9 @@ module top_fulladder #(
 
     wire clk = io_in[`I_CLK_BITID];		// 0
     wire reset = io_in[`I_RST_BITID];		// 1
-    wire [`WIDTH-1:0] a = io_in[`I_A_BITID+`WIDTH-1:`I_A_BITID];	// [2:2]
-    wire [`WIDTH-1:0] b = io_in[`I_B_BITID+`WIDTH-1:`I_B_BITID];	// [3:3]
-    wire [`WIDTH-1:0] y = io_in[`I_Y_BITID];				// [4]
+    wire [WIDTH-1:0] a = io_in[`I_A_BITID+WIDTH-1:`I_A_BITID];	// [2:2]
+    wire [WIDTH-1:0] b = io_in[`I_B_BITID+WIDTH-1:`I_B_BITID];	// [3:3]
+    wire [WIDTH-1:0] y = io_in[`I_Y_BITID];				// [4]
 
     wire c;
     assign io_out[`O_CARRY_BITID] = c;		// 6

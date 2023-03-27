@@ -1,5 +1,4 @@
 // headline config
-`define WIDTH		1
 
 // wire [7:0] io_in, interface
 `define I_CLK_BITID	0
