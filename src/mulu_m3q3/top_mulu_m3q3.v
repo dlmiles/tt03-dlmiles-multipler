@@ -1,10 +1,10 @@
 `default_nettype none
 
 `include "global.vh"
-`include "config.vh"	// mulu_x3y3.vh
+`include "config.vh"	// mulu_m3q3.vh
 
 // This exists a a top level module for production wiring the ports up
-module top_mulu_x3y3 (
+module top_mulu_m3q3 (
     input	[`INPUT_WIDTH-1:0]		io_in,
     output	[`OUTPUT_WIDTH-1:0]		io_out
 );
@@ -25,7 +25,7 @@ module top_mulu_x3y3 (
     assign io_out[`O_READY_BITID] = rdy;	// 7
 `endif
 
-    mulu_x3y3 mulu_x3y3(
+    mulu_m3q3 mulu_m3q3(
         .x   (x),
         .y   (y),
         .p   (p)

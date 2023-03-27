@@ -1,10 +1,10 @@
 `default_nettype none
 
 `include "global.vh"
-`include "config.vh"	// mulu_x3y3.vh
+`include "config.vh"	// mulu_m3q3.vh
 
 // Unsigned Multipler, X width 3, Y width 3, making P result width 6
-module mulu_x3y3 (
+module mulu_m3q3 (
     input	[`X_WIDTH-1:0]	x,
     input	[`Y_WIDTH-1:0]	y,
 

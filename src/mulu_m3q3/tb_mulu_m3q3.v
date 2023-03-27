@@ -2,14 +2,14 @@
 `timescale 1ns/1ps
 
 `include "global.vh"
-`include "config.vh"    // mulu_x3y3.vh
+`include "config.vh"    // mulu_m3q3.vh
 
 /*
 this testbench just instantiates the module and makes some convenient wires
 that can be driven / tested by the cocotb test.py
 */
 
-module tb_mulu_x3y3 (
+module tb_mulu_m3q3 (
     // testbench is controlled by test.py
     input			clk,
     input	[`X_WIDTH-1:0]	x,
@@ -26,13 +26,13 @@ module tb_mulu_x3y3 (
 
     // this part dumps the trace to a vcd file that can be viewed with GTKWave
     initial begin
-        $dumpfile ("tb_mulu_x3y3.vcd");
-        $dumpvars (0, tb_mulu_x3y3);
+        $dumpfile ("tb_mulu_m3q3.vcd");
+        $dumpvars (0, tb_mulu_m3q3);
         #1;
     end
 
     // instantiate the DUT
-    mulu_x3y3 multipler_unsigned_x3y3 (
+    mulu_m3q3 multipler_unsigned_m3q3 (
 `ifdef GL_TEST
         .vccd1( 1'b1),
         .vssd1( 1'b0),
