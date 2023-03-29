@@ -53,7 +53,7 @@ module carry_look_ahead #(
 
             wire [genc+1:0] otmp;		// or
             wire [genc+1:0] atmp [genc+2:0];	// and
-            wire [genc+1] ares;			// N-input AND result (each AND_RES below)
+            wire [genc+1:0] ares;		// N-input AND result (each AND_RES below)
 
             //      OR_TERM3 +         OR_TERM2 +    OR_TERM1 +       OR_TERM0
             //      AND_RES3           AND_RES2      AND_RES1         AND_RES0
