@@ -38,9 +38,17 @@ jobs:
         python-version: '3.10'
     - run: pip install -r tt/requirements.txt
 
+    # for debugging, show all the files
+    - name: show files *tcl MARK1
+      run: find runs/wokwi/ -name "*.tcl"
+
     # fetch the Verilog from Wokwi API
     - name: fetch Verilog and build config
       run: ./tt/tt_tool.py --create-user-config
+
+    # for debugging, show all the files
+    - name: show files *tcl MARK2
+      run: find runs/wokwi/ -name "*.tcl"
 
     # build OpenLane
     - name: openlane repo
@@ -49,9 +57,17 @@ jobs:
         cd $OPENLANE_ROOT
         make
 
+    # for debugging, show all the files
+    - name: show files *tcl MARK3
+      run: find runs/wokwi/ -name "*.tcl"
+
     # run OpenLane to build the GDS
     - name: make GDS
       run: ./tt/tt_tool.py --harden
+
+    # for debugging, show all the files
+    - name: show files *tcl MARK4
+      run: find runs/wokwi/ -name "*.tcl"
 
     # for debugging, show all the files
     - name: show files
@@ -158,7 +174,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
           name: gatelevel-test-vcd
-          path: src/tb.vcd
+          path: src/*.vcd
 
 ##############################################################
 # Generate files for the 3D viewer
