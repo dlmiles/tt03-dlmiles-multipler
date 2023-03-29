@@ -34,6 +34,10 @@ module top_negedge_carry_look_ahead #(
     carry_look_ahead #(
         .WIDTH(WIDTH)
     ) carry_look_ahead (
+`ifdef GL_TEST
+        .vccd1( 1'b1),
+        .vssd1( 1'b0),
+`endif
         .a   (a),
         .b   (b),
         .y   (1'b0),	// no spare input ports :(
