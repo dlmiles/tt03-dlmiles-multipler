@@ -65,7 +65,9 @@ set ::env(CLOCK_TREE_SYNTH) 1
 # period is in ns, so 20ns == 50MHz
 #set ::env(CLOCK_PERIOD) "20"
 # period is in ns, so 15ns == 66.666MHz
-set ::env(CLOCK_PERIOD) "15"
+#set ::env(CLOCK_PERIOD) "15"
+# period is in ns, so 12ns == 83.333MHz
+set ::env(CLOCK_PERIOD) "12"
 set ::env(CLOCK_PORT) {io_in[0]}
 
 # hold/slack margin
