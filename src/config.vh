@@ -4,6 +4,7 @@
 //`define	IMPL_TWOS		1
 //`define	IMPL_HALFADDER		1
 //`define	IMPL_FULLADDER		1
+//`define	IMPL_CARRY_LOOK_AHEAD	1
 //`define	IMPL_MULU_M2Q2		1
 //`define	IMPL_MULU_M3Q3		1
 //`define	IMPL_MULU_M7Q7		1
@@ -22,6 +23,13 @@
 
 `ifdef IMPL_FULLADDER
 `include "fulladder/fulladder.vh"
+`endif
+
+`ifdef IMPL_CARRY_LOOK_AHEAD
+`include "carry_look_ahead/carry_look_ahead.vh"
+`endif
+`ifdef IMPL_NEGEDGE_CARRY_LOOK_AHEAD
+`include "carry_look_ahead/carry_look_ahead.vh"
 `endif
 
 `ifdef IMPL_MULU_M2Q2

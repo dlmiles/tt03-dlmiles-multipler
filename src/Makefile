@@ -40,6 +40,12 @@ endif
 ifeq ($(IMPL_FULLADDER),1)
  include $(PWD)/fulladder/Makefile
 endif
+ifeq ($(IMPL_CARRY_LOOK_AHEAD),1)
+ include $(PWD)/carry_look_ahead/Makefile
+endif
+ifeq ($(IMPL_NEGEDGE_CARRY_LOOK_AHEAD),1)
+ include $(PWD)/carry_look_ahead/Makefile
+endif
 ifeq ($(IMPL_MULU_M2Q2),1)
  include $(PWD)/mulu_m2q2/Makefile
 endif

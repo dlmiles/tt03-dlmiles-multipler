@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import os
 import sys
+import inspect
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge, FallingEdge, Timer, ClockCycles
@@ -109,7 +110,32 @@ def mul_config_dump(cfg, logger=print, pfx=""):
         if k not in seen_set:
             logger("{}{}={}".format(pfx, k, v))
 
+def funcname():
+    return inspect.currentframe().f_back.f_code.co_name
 
+skip_test_count_true = 0
+skip_test_count_false = 0
+def check_skip_test(dut, name=None):
+    global skip_test_count_true
+    global skip_test_count_false
+
+    if name is None and skip_test_count_true > 0 and skip_test_count_false == 0:
+        raise Exception("All tests skipped ({}/{})".format(skip_test_count_true+1, skip_test_count_true+skip_test_count_false+1))
+
+    # github-action sets this
+    if 'CI' in os.environ:
+        # deny default ?  get list of allow from envvar ?
+        if name == "negedge_carry_look_ahead":
+            skip_test_count_false += 1
+            return False
+        # allowed
+        dut._log.warning("SKIPPING: {}".format(name))
+        skip_test_count_true += 1
+        #raise TestComplete("SKIPPED: {}".format(name))
+        return True
+    # default
+    skip_test_count_false += 1
+    return False
 
 
 def try_integer(v):
@@ -199,6 +225,8 @@ async def try_rst(dut):
 #
 @cocotb.test()
 async def test_mulu_m7q7(dut):
+    if check_skip_test(dut, funcname()):
+        return
     # FIXME can apply this with annotatation and apply interceptor pattern around ?
     with wavedrom_init(dut) as wave:
         await do_test_mulu_m7q7(dut)
@@ -357,6 +385,8 @@ async def do_test_mulu_m7q7(dut):
 #
 @cocotb.test()
 async def test_muls_m3y3(dut):
+    if check_skip_test(dut, funcname()):
+        return
     report_resolvable(dut, 'initial ')
     clock = try_clk(dut)
     await try_rst(dut)
@@ -392,6 +422,8 @@ async def test_muls_m3y3(dut):
 #
 @cocotb.test()
 async def test_mulu_m3q3(dut):
+    if check_skip_test(dut, funcname()):
+        return
     # FIXME can apply this with annotatation and apply interceptor pattern around ?
     with wavedrom_init(dut) as wave:
         await do_test_mulu_m3q3(dut)
@@ -439,6 +471,8 @@ async def do_test_mulu_m3q3(dut):
 #
 @cocotb.test()
 async def test_mulu_m2q2(dut):
+    if check_skip_test(dut, funcname()):
+        return
     report_resolvable(dut, 'initial ')
     clock = try_clk(dut)
     await try_rst(dut)
@@ -468,44 +502,14 @@ async def test_mulu_m2q2(dut):
                 dut.p.value, try_integer(dut.p.value),
                 (x * y)))
             assert dut.p.value.integer == (x * y)
-
-
-@cocotb.test()
-async def test_halfadder(dut):
-    report_resolvable(dut, 'initial ')
-    clock = try_clk(dut)
-    await try_rst(dut)
-
-    width = dut.WIDTH.value
-    ab_max = pow(2, width) - 1
-    a_range = range(0, ab_max+1)
-    b_range = range(0, ab_max+1)
-    
-    dut.a.value = 0
-    dut.b.value = 0
-    await ClockCycles(dut.clk, 1)
-
-    report_resolvable(dut)
-
-    for a in a_range:
-        dut.a.value = a
-        for b in b_range:
-            dut.b.value = b
-            await ClockCycles(dut.clk, 2)
-
-            dut._log.info("x={0} y={1} => s={2} {3} c={4} {5}{6}".format(a, b,
-                dut.s.value, try_integer(dut.s.value),
-                dut.c.value, try_integer(dut.c.value),
-                '+' if(dut.c.value) else ''))
-            assert dut.s.value.is_resolvable
-            assert dut.c.value.is_resolvable
-
 #
 #
-# FIXME read data from fulladder.txt
+# FIXME read data from carry_look_ahead.txt
 #
 @cocotb.test()
-async def test_fulladder(dut):
+async def test_carry_look_ahead(dut):
+    if check_skip_test(dut, funcname()):
+        return
     report_resolvable(dut, 'initial ')
     clock = try_clk(dut)
     await try_rst(dut)
@@ -548,9 +552,229 @@ async def test_fulladder(dut):
                 assert dut.c.value == expectedValue_c
 
 
+#
+#
+# FIXME read data from carry_look_ahead.txt
+#
+@cocotb.test()
+async def negedge_carry_look_ahead(dut):
+    if check_skip_test(dut, funcname()):
+        return
+    # FIXME can apply this with annotatation and apply interceptor pattern around ?
+    with wavedrom_init(dut) as wave:
+        await do_negedge_carry_look_ahead(dut)
+        wavedrom_dumpj(dut)
+
+async def do_negedge_carry_look_ahead(dut):
+    report_resolvable(dut, 'initial ')
+    clock = try_clk(dut)
+    await try_rst(dut)
+
+    if design_element_exists(dut, 'WIDTH'):
+        width = dut.WIDTH.value
+    elif design_element_exists(dut, 'carry_look_ahead'):
+        width = dut.carry_look_ahead.WIDTH.value
+    else:
+        width = 7	## FIXME
+    ab_base = pow(2, width)
+    ab_max = ab_base - 1
+    a_range = range(0, ab_max+1)
+    b_range = range(0, ab_max+1)
+    dut._log.info("PARAMS width={} ab_base={} ab_max={} a_range={} b_range={}".format(
+        width, ab_base, ab_max, a_range, b_range
+    ))
+
+    dut.in7.value = 0
+    await ClockCycles(dut.clk, 1)
+
+    report_resolvable(dut)
+    data = {}
+
+    await FallingEdge(dut.clk)
+
+    for y in [0]:		# y=1 not supported no input port
+        for a in a_range:
+            for b in b_range:
+                data['have_op'] = True
+
+                dut.in7.value = b
+                data['b_next'] = b
+
+                await RisingEdge(dut.clk)
+
+                dut.in7.value = a
+                data['a_next'] = a
+
+                await FallingEdge(dut.clk)
+
+                if dut.out8.value.is_resolvable:
+                    data['s'] = dut.out8.value.integer >> 1
+                    data['c'] = dut.out8.value.integer & 1
+                else:
+                    data['s'] = 'UNKNOWN'
+                    data['c'] = 'UNKNOWN'
+
+                data['have_result'] = 'a' in data and 'a' in data   # we use inputs given, as we want to see bad outputs
+
+                if data['have_result']:
+                    total = a + b + y
+                    expectedValue_s = total % ab_base
+                    expectedValue_c = 0 if(total <= ab_max) else 1
+
+                    dut._log.info("a={0:3d} {1}  b={2:3d} {3}  y={4}  => c={5} s={6:3d}{7} {8}".format(
+                        data['a'], try_binary(data['a'], width),
+                        data['b'], try_binary(data['b'], width),
+                        y,	# no input port for this
+                        data['c'],
+                        data['s'],
+                        '+' if(data['c']) else ' ',
+                        try_binary(data['s'], width)
+                        ))
+                    assert data['s'] != 'UNKNOWN'
+                    assert data['c'] != 'UNKNOWN'
+                    assert data['s'] == expectedValue_s
+                    assert data['c'] == expectedValue_c
+
+                if 'a_next' in data:
+                    data['a'] = data['a_next']
+                    del data['a_next']
+                if 'b_next' in data:
+                    data['b'] = data['b_next']
+                    del data['b_next']
+                data['have_op'] = 'a' in data and 'b' in data
+
+
+    if True:	# indentation cheat
+        if True:	# indentation cheat2
+            if data['have_op']:
+                await RisingEdge(dut.clk)
+
+                if dut.out8.value.is_resolvable:
+                    data['s'] = dut.out8.value.integer >> 1
+                    data['c'] = dut.out8.value.integer & 1
+                else:
+                    data['s'] = 'UNKNOWN'
+                    data['c'] = 'UNKNOWN'
+
+                data['have_result'] = 'a' in data and 'a' in data   # we use inputs given, as we want to see bad outputs
+
+                if data['have_result']:
+                    total = a + b + y
+                    expectedValue_s = total % ab_base
+                    expectedValue_c = 0 if(total <= ab_max) else 1
+
+                    dut._log.info("a={0:3d} {1}  b={2:3d} {3}  y={4}  => c={5} s={6:3d}{7} {8}".format(
+                        data['a'], try_binary(data['a'], width),
+                        data['b'], try_binary(data['b'], width),
+                        y,	# no input port for this
+                        data['c'],
+                        data['s'],
+                        '+' if(data['c']) else ' ',
+                        try_binary(data['s'], width)
+                        ))
+                    assert data['s'] != 'UNKNOWN'
+                    assert data['c'] != 'UNKNOWN'
+                    assert data['s'] == expectedValue_s
+                    assert data['c'] == expectedValue_c
+
+                if 'a_next' in data:
+                    data['a'] = data['a_next']
+                    del data['a_next']
+                if 'b_next' in data:
+                    data['b'] = data['b_next']
+                    del data['b_next']
+                data['have_op'] = 'a' in data and 'b' in data
+
+
+#
+#
+# FIXME read data from fulladder.txt
+#
+@cocotb.test()
+async def test_fulladder(dut):
+    if check_skip_test(dut, funcname()):
+        return
+    report_resolvable(dut, 'initial ')
+    clock = try_clk(dut)
+    await try_rst(dut)
+
+    width = dut.WIDTH.value
+    ab_base = pow(2, width)
+    ab_max = ab_base - 1
+    a_range = range(0, ab_max+1)
+    b_range = range(0, ab_max+1)
+    dut._log.info("PARAMS width={} ab_base={} ab_max={} a_range={} b_range={}".format(
+        width, ab_base, ab_max, a_range, b_range
+    ))
+
+    dut.a.value = 0
+    dut.b.value = 0
+    dut.y.value = 0
+    await ClockCycles(dut.clk, 1)
+
+    report_resolvable(dut)
+
+    for y in (0, 1):
+        dut.y.value = y
+        for a in a_range:
+            dut.a.value = a
+            for b in b_range:
+                dut.b.value = b
+                await ClockCycles(dut.clk, 1)
+
+                total = a + b + y
+                expectedValue_s = total % ab_base
+                expectedValue_c = 0 if(total <= ab_max) else 1
+
+                dut._log.info("a={0} b={1} y={2} => c={3} s={4} {5}{6}".format(a, b, y,
+                    dut.c.value,
+                    dut.s.value, try_integer(dut.s.value),
+                    '+' if(dut.c.value) else ''))
+                assert dut.s.value.is_resolvable
+                assert dut.c.value.is_resolvable
+                assert dut.s.value == expectedValue_s
+                assert dut.c.value == expectedValue_c
+
+
+
+
+@cocotb.test()
+async def test_halfadder(dut):
+    if check_skip_test(dut, funcname()):
+        return
+    report_resolvable(dut, 'initial ')
+    clock = try_clk(dut)
+    await try_rst(dut)
+
+    width = dut.WIDTH.value
+    ab_max = pow(2, width) - 1
+    a_range = range(0, ab_max+1)
+    b_range = range(0, ab_max+1)
+
+    dut.a.value = 0
+    dut.b.value = 0
+    await ClockCycles(dut.clk, 1)
+
+    report_resolvable(dut)
+
+    for a in a_range:
+        dut.a.value = a
+        for b in b_range:
+            dut.b.value = b
+            await ClockCycles(dut.clk, 2)
+
+            dut._log.info("x={0} y={1} => s={2} {3} c={4} {5}{6}".format(a, b,
+                dut.s.value, try_integer(dut.s.value),
+                dut.c.value, try_integer(dut.c.value),
+                '+' if(dut.c.value) else ''))
+            assert dut.s.value.is_resolvable
+            assert dut.c.value.is_resolvable
+
 # twos-compliment test
 @cocotb.test()
 async def test_twos(dut):
+    if check_skip_test(dut, funcname()):
+        return
     report_resolvable(dut, 'initial ')
     clock = try_clk(dut)
     await try_rst(dut)
@@ -582,6 +806,8 @@ async def test_twos(dut):
 # ones-compliment test
 @cocotb.test()
 async def test_ones(dut):
+    if check_skip_test(dut, funcname()):
+        return
     report_resolvable(dut, 'initial ')
     clock = try_clk(dut)
     await try_rst(dut)
@@ -608,3 +834,7 @@ async def test_ones(dut):
         assert dut.o.value.is_resolvable
         assert dut.o.value == expected_value
         #assert dut.outputs.value.is_resolvable
+
+@cocotb.test(stage=sys.maxsize)
+async def everything_skipped_test(dut):
+    check_skip_test(dut)

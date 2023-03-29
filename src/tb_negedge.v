@@ -33,6 +33,17 @@ module tb_negedge (
 
     // instantiate the DUT
 
+`ifdef IMPL_NEGEDGE_CARRY_LOOK_AHEAD
+    top_negedge_carry_look_ahead carry_look_ahead (
+`ifdef GL_TEST
+        .vccd1( 1'b1),
+        .vssd1( 1'b0),
+`endif
+        .io_in  (inputs),
+        .io_out (outputs)
+    );
+`endif
+
 `ifdef IMPL_MULU_M7Q7
     top_mulu_m7q7 multiplier_unsigned_m7q7 (
 `ifdef GL_TEST
