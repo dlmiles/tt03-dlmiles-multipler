@@ -1,6 +1,13 @@
 # Makefile
 # See https://docs.cocotb.org/en/stable/quickstart.html for more info
 
+# This is needed for .github/workflows/test.yml
+ifeq ($(CI),true)
+ TOP_MODULE = $(shell grep "top_module:" "$(CURDIR)/../info.yaml" | sed -e 's/\#.*//' -e 's/.*://' | tr -d '" ' | sed -e 's/top_//')
+ TOP_MODULE_UPPERCASE = $(shell echo -n "$(TOP_MODULE)" | tr 'a-z' 'A-Z')
+ IMPL_$(TOP_MODULE_UPPERCASE) = 1
+endif
+
 # defaults
 SIM ?= icarus
 TOPLEVEL_LANG ?= verilog
@@ -67,6 +74,11 @@ MODULE = test
 # include cocotb's make rules to take care of the simulator setup
 include $(shell cocotb-config --makefiles)/Makefile.sim
 
+checkenvs:
+	@echo $(CURDIR)
+	@echo $(TOP_MODULE)
+	@echo $(TOP_MODULE_UPPERCASE)
+	@echo $(IMPL_NEGEDGE_CARRY_LOOK_AHEAD)
 
 distclean: clean
 	$(RM) tb.vcd tb_*.vcd
