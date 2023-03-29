@@ -36,7 +36,7 @@ module top_negedge_carry_look_ahead #(
     ) carry_look_ahead (
         .a   (a),
         .b   (b),
-        .y   (0),	// no spare input ports :(
+        .y   (1'b0),	// no spare input ports :(
         .c   (c),
         .s   (s)
     );
