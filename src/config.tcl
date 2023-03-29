@@ -66,8 +66,10 @@ set ::env(CLOCK_TREE_SYNTH) 1
 #set ::env(CLOCK_PERIOD) "20"
 # period is in ns, so 15ns == 66.666MHz
 #set ::env(CLOCK_PERIOD) "15"
+# period is in ns, so 14ns == 71.428MHz
+set ::env(CLOCK_PERIOD) "14"
 # period is in ns, so 13ns == 76.923MHz
-set ::env(CLOCK_PERIOD) "13"
+#set ::env(CLOCK_PERIOD) "13"
 # SETUP violations, found fMAX
 # period is in ns, so 12ns == 83.333MHz
 #set ::env(CLOCK_PERIOD) "12"
