@@ -38,17 +38,9 @@ jobs:
         python-version: '3.10'
     - run: pip install -r tt/requirements.txt
 
-    # for debugging, show all the files
-    - name: show files *tcl MARK1
-      run: find / -name "wokwi" -or -name "*.tcl" 2>/dev/null || true
-
     # fetch the Verilog from Wokwi API
     - name: fetch Verilog and build config
       run: ./tt/tt_tool.py --create-user-config
-
-    # for debugging, show all the files
-    - name: show files *tcl MARK2
-      run: find / -name "wokwi" -or -name "*.tcl" 2>/dev/null || true
 
     # build OpenLane
     - name: openlane repo
@@ -57,21 +49,9 @@ jobs:
         cd $OPENLANE_ROOT
         make
 
-    # for debugging, show all the files
-    - name: show files *tcl MARK3
-      run: find / -name "wokwi" -or -name "*.tcl" 2>/dev/null || true
-
-    # for debugging, show all the files
-    - name: show files flow.tcl
-      run: cat /home/runner/openlane/flow.tcl || true
-
     # run OpenLane to build the GDS
     - name: make GDS
       run: ./tt/tt_tool.py --harden
-
-    # for debugging, show all the files
-    - name: show files *tcl MARK4
-      run: find / -name "wokwi" -or -name "*.tcl" 2>/dev/null || true
 
     # for debugging, show all the files
     - name: show files
