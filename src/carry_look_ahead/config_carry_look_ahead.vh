@@ -1,0 +1,2 @@
+
+`define	IMPL_CARRY_LOOK_AHEAD		1
