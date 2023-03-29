@@ -21,6 +21,7 @@ module top_negedge_carry_look_ahead #(
     assign io_out[`O_SUM_BITID+WIDTH-1:`O_SUM_BITID] = s;	// [7:1]
     wire c;
     assign io_out[`O_CARRY_BITID] = c;				// [0]
+assign c = io_in[7];
 
     mux_clk_edge_in #(
         .WIDTH(WIDTH)
@@ -45,7 +46,7 @@ module top_negedge_carry_look_ahead #(
         .a   (a),
         .b   (b),
         .y   (1'b0),	// no spare input ports :(
-        .c   (c),
+//        .c   (c),
         .s   (s)
     );
 
