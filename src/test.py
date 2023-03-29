@@ -123,7 +123,7 @@ def check_skip_test(dut, name=None):
         raise Exception("All tests skipped ({}/{})".format(skip_test_count_true+1, skip_test_count_true+skip_test_count_false+1))
 
     # github-action sets this
-    if 'CI' in os.environ:
+    if 'CI' in os.environ and os.environ['CI'] == 'true':
         # deny default ?  get list of allow from envvar ?
         if name == "negedge_carry_look_ahead":
             skip_test_count_false += 1
