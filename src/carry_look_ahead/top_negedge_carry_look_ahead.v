@@ -25,6 +25,10 @@ module top_negedge_carry_look_ahead #(
     mux_clk_edge_in #(
         .WIDTH(WIDTH)
     ) mux_in (
+`ifdef GL_TEST
+        .vccd1( 1'b1),
+        .vssd1( 1'b0),
+`endif
         .clk (clk),
         .in  (ab),	// io_in[7:1]
         .neg (a),
