@@ -155,6 +155,39 @@ def try_binary(v, width=None):
     else:
         return BinaryValue(v, n_bits=width)
 
+
+my_assert_count_pass = 0
+my_assert_count_fail = 0
+
+def my_assert(v):
+    global my_assert_count_pass
+    global my_assert_count_fail
+    try:
+        assert v
+        my_assert_count_pass += 1
+    except:
+        my_assert_count_fail += 1
+        pass
+
+def my_assert_summary(dut):
+    global my_assert_count_pass
+    global my_assert_count_fail
+    if my_assert_count_pass > 0 or my_assert_count_fail > 0:
+        dut._log.info("my_assert_count_pass={}".format(my_assert_count_pass))
+        if my_assert_count_fail > 0:
+            dut._log.error("my_assert_count_fail={}".format(my_assert_count_fail))
+            raise Exception("my_assert_count_fail > 0".format())
+        else:
+            dut._log.info("my_assert_count_fail={}".format(my_assert_count_fail))
+
+# Useful when you want a particular format, but only if it is a number
+#  try_decimal_format(valye, '3d')
+def try_decimal_format(v, fmt=None):
+    if fmt is not None and type(v) is int:
+        fmtstr = "{{}}".format(fmt)
+        return fmtstr.format(v)
+    return "{}".format(v)
+
 def try_name(v):
     if v._name:
         return v._name
@@ -296,10 +329,10 @@ async def do_test_mulu_m7q7(dut):
             data['have_result'] = 'x' in data and 'y' in data   # we use inputs given, as we want to see bad outputs
 
             if data['have_result']:
-                dut._log.info("x={0:3d} {1}  y={2:3d} {3}  =>  p={4:5d} {5}  p_rise_hi={6:3d} {7}  p_fall_lo={8:3d} {9}".format(
+                dut._log.info("x={0:3d} {1}  y={2:3d} {3}  =>  p={4} {5}  p_rise_hi={6:3d} {7}  p_fall_lo={8:3d} {9}".format(
                     data['x'], try_binary(data['x'], cfg['x_width']),
                     data['y'], try_binary(data['y'], cfg['y_width']),
-                    data['p'], try_binary(data['p'], cfg['p_width']),
+                    try_decimal_format(data['p'], '5d'), try_binary(data['p'], cfg['p_width']),
                     data['p_rise_1'], try_binary(data['p_rise_1'], 7),
                     data['p_fall_1'], try_binary(data['p_fall_1'], 7)
                     ))
@@ -348,10 +381,10 @@ async def do_test_mulu_m7q7(dut):
             data['have_result'] = 'x' in data and 'y' in data	# we use inputs given, as we want to see bad outputs
 
             if data['have_result']:
-                dut._log.info("x={0:3d} {1}  y={2:3d} {3}  =>  p={4:5d} {5}  p_rise_hi={6:3d} {7}  p_fall_lo={8:3d} {9}".format(
+                dut._log.info("x={0:3d} {1}  y={2:3d} {3}  =>  p={4} {5}  p_rise_hi={6:3d} {7}  p_fall_lo={8:3d} {9}".format(
                     data['x'], try_binary(data['x'], cfg['x_width']),
                     data['y'], try_binary(data['y'], cfg['y_width']),
-                    data['p'], try_binary(data['p'], cfg['p_width']),
+                    try_decimal_format(data['p'], '5d'), try_binary(data['p'], cfg['p_width']),
                     data['p_rise_1'], try_binary(data['p_rise_1'], 7),
                     data['p_fall_1'], try_binary(data['p_fall_1'], 7)
                     ))
@@ -621,19 +654,19 @@ async def do_negedge_carry_look_ahead(dut):
                     expectedValue_s = total % ab_base
                     expectedValue_c = 0 if(total <= ab_max) else 1
 
-                    dut._log.info("a={0:3d} {1}  b={2:3d} {3}  y={4}  => c={5} s={6:3d}{7} {8}".format(
+                    dut._log.info("a={0:3d} {1}  b={2:3d} {3}  y={4}  => c={5} s={6}{7} {8}".format(
                         data['a'], try_binary(data['a'], width),
                         data['b'], try_binary(data['b'], width),
                         y,	# no input port for this
-                        data['c'],
-                        data['s'],
+                        try_decimal_format(data['c']),
+                        try_decimal_format(data['s'], '3d'),
                         '+' if(data['c']) else ' ',
                         try_binary(data['s'], width)
                         ))
-                    assert data['s'] != 'UNKNOWN'
-                    assert data['c'] != 'UNKNOWN'
-                    assert data['s'] == expectedValue_s
-                    assert data['c'] == expectedValue_c
+                    my_assert(data['s'] != 'UNKNOWN')
+                    my_assert(data['c'] != 'UNKNOWN')
+                    my_assert(data['s'] == expectedValue_s)
+                    my_assert(data['c'] == expectedValue_c)
 
                 if 'a_next' in data:
                     data['a'] = data['a_next']
@@ -663,19 +696,19 @@ async def do_negedge_carry_look_ahead(dut):
                     expectedValue_s = total % ab_base
                     expectedValue_c = 0 if(total <= ab_max) else 1
 
-                    dut._log.info("a={0:3d} {1}  b={2:3d} {3}  y={4}  => c={5} s={6:3d}{7} {8}".format(
+                    dut._log.info("a={0:3d} {1}  b={2:3d} {3}  y={4}  => c={5} s={6}{7} {8}".format(
                         data['a'], try_binary(data['a'], width),
                         data['b'], try_binary(data['b'], width),
                         y,	# no input port for this
-                        data['c'],
-                        data['s'],
+                        try_decimal_format(data['c']),
+                        try_decimal_format(data['s'], '3d'),
                         '+' if(data['c']) else ' ',
                         try_binary(data['s'], width)
                         ))
-                    assert data['s'] != 'UNKNOWN'
-                    assert data['c'] != 'UNKNOWN'
-                    assert data['s'] == expectedValue_s
-                    assert data['c'] == expectedValue_c
+                    my_assert(data['s'] != 'UNKNOWN')
+                    my_assert(data['c'] != 'UNKNOWN')
+                    my_assert(data['s'] == expectedValue_s)
+                    my_assert(data['c'] == expectedValue_c)
 
                 if 'a_next' in data:
                     data['a'] = data['a_next']
@@ -838,3 +871,4 @@ async def test_ones(dut):
 @cocotb.test(stage=sys.maxsize)
 async def everything_skipped_test(dut):
     check_skip_test(dut)
+    my_assert_summary(dut)
