@@ -61,6 +61,10 @@ jobs:
     - name: show files *tcl MARK3
       run: find / -name "wokwi" -or -name "*.tcl" 2>/dev/null || true
 
+    # for debugging, show all the files
+    - name: show files flow.tcl
+      run: cat /home/runner/openlane/flow.tcl || true
+
     # run OpenLane to build the GDS
     - name: make GDS
       run: ./tt/tt_tool.py --harden

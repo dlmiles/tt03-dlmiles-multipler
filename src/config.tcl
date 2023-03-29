@@ -53,7 +53,9 @@ set ::env(DECAP_CELL) "\
 # clock
 set ::env(CLOCK_TREE_SYNTH) 1
 # period is in ns, so 20000ns == 50kHz
-set ::env(CLOCK_PERIOD) "20000"
+#set ::env(CLOCK_PERIOD) "20000"
+# period is in ns, so 100ns == 10MHz
+set ::env(CLOCK_PERIOD) "100"
 set ::env(CLOCK_PORT) {io_in[0]}
 
 # hold/slack margin
