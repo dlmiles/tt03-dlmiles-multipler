@@ -11,7 +11,7 @@ module top_mulu_m7q7 (
 
     wire clk = io_in[`I_CLK_BITID];		// 0
     // No RESET we are combinational anyway
-    wire [`X_WIDTH-1:0] mq = io_in[`I0_X_BITID+`X_WIDTH-1:`I0_X_BITID];	// [1+7-1] = [7:1]
+    wire [`X_WIDTH-1:0] mq = io_in[`I0_X_BITID+`X_WIDTH-1:`I0_X_BITID];	// [1+7-1:1] = [7:1]
 
     wire [`X_WIDTH-1:0] m;
     wire [`Y_WIDTH-1:0] q;
